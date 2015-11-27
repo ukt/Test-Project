@@ -4,7 +4,7 @@ package app.game.entities {
 	import flash.display.MovieClip;
 
 	public interface Entity {
-		function update(accelerometerVO:AccelerometerVO):void;
+		function update():void;
 
 		function collide(entity:Entity):void;
 

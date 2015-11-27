@@ -10,7 +10,7 @@ package app {
 	public class World {
 		private var main:Sprite;
 		private var entities:Vector.<Entity> = new <Entity>[];
-		private var accelerometerVO:AccelerometerVO = new AccelerometerVO();
+		public var accelerometerVO:AccelerometerVO = new AccelerometerVO();
 
 		public function World() {
 		}
@@ -35,12 +35,8 @@ package app {
 		}
 
 		private function onEnterFrame(event:Event):void {
-			/*for each(var entity:Entity in entities) {
-				entity.update();
-			}*/
-
 			for each(var entity1:Entity in entities) {
-				entity1.update(accelerometerVO);
+				entity1.update();
 				for each(var entity2:Entity in entities) {
 					entity2.collide(entity1);
 				}
