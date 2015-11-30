@@ -24,7 +24,7 @@ package app {
 			tf.border = true;
 			main.addChild(tf);
 			world.initialize(main);
-			new GameArea();
+			new GameArea(world);
 		}
 
 		private function initializeAppGUI(main:Sprite):void {

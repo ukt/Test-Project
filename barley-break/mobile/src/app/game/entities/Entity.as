@@ -1,6 +1,4 @@
 package app.game.entities {
-	import app.accelerometer.AccelerometerVO;
-
 	import flash.display.MovieClip;
 
 	public interface Entity {
