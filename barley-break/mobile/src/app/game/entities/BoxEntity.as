@@ -24,6 +24,8 @@ package app.game.entities {
 
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			this.name = name;
+			width = width*App.appScale;
+			height = height*App.appScale;
 			maxSpeed = 60;
 			square = Math.sqrt(width * height);
 			var gi:Number = 9.8 + Math.random()*5;

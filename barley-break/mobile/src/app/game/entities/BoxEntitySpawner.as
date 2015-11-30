@@ -17,6 +17,8 @@ package app.game.entities {
 
 		public function BoxEntitySpawner(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			this.name = name;
+			width = width*App.appScale;
+			height = height*App.appScale;
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
 			trace(x, y);
@@ -42,7 +44,7 @@ package app.game.entities {
 		}
 
 		private function spawnNewEntity(event:MouseEvent):void {
-			var size:int = 20 + Math.floor(Math.random() * 40);
+			var size:int = 40 + Math.floor(Math.random() * 80);
 			var boxEntity:BoxEntity = new BoxEntity("", 1, 1, size, size);
 			var world:World = App.world;
 			world.addEntity(boxEntity);

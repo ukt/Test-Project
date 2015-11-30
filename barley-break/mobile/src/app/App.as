@@ -11,7 +11,7 @@ package app {
 		public static const world:World = new World();
 		public static var main:Sprite;
 		public static var tf:TextField;
-		private static var appScale:int = 1;
+		public static var appScale:Number = 1;
 		public static var appSize:Rectangle;
 		public static var appLeftOffset:int;
 		public static var deviceSize:Rectangle;

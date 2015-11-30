@@ -1,4 +1,6 @@
 package app.game.entities {
+	import app.App;
+
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 
@@ -9,6 +11,8 @@ package app.game.entities {
 
 
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+			width = width*App.appScale;
+			height = height*App.appScale;
 			this.name = name;
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
