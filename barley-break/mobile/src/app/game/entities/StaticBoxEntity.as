@@ -3,6 +3,8 @@ package app.game.entities {
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 
 	public class StaticBoxEntity implements Entity {
 		private var _ani:MovieClip = new MovieClip();
@@ -13,10 +15,18 @@ package app.game.entities {
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			width = width*App.appScale;
 			height = height*App.appScale;
-			this.name = name;
+			this.name = name + x + "_" + y;
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
 			trace(x, y);
+			var textField:TextField = new TextField();
+			textField.text = this.name;
+			textField.width = width - 1;
+			textField.height = height - 1;
+			textField.selectable = false;
+			textField.cacheAsBitmap = true;
+			textField.autoSize = TextFieldAutoSize.CENTER;
+			_ani.addChild(textField);
 			var graphics:Graphics = _ani.graphics;
 			var colorArray:Array = [0xCECECE];
 			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);

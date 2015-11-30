@@ -2,56 +2,34 @@ package app.game.entities {
 	import app.App;
 	import app.World;
 
-	import flash.display.Graphics;
 	import flash.display.MovieClip;
-	import flash.events.MouseEvent;
 	import flash.geom.Rectangle;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
+	import flash.utils.getTimer;
 
-	public class BoxEntitySpawner implements Entity {
+	public class BoxEntityAutoSpawner implements Entity, Actioner {
 		private var _ani:MovieClip = new MovieClip();
+		private var _timeToCheck:int;
 
 		private var name:String;
 
 
-		public function BoxEntitySpawner(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+		public function BoxEntityAutoSpawner(name:String, timeToCheck:int = 5000) {
 			this.name = name;
-			width = width*App.appScale;
-			height = height*App.appScale;
-			_ani.x = x * width + x * 15;
-			_ani.y = y * height + y * 15;
-			trace(x, y);
-			var graphics:Graphics = _ani.graphics;
-			var colorArray:Array = [0xCECECE];
-			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);
-			var color:uint = colorArray[randomColorID];
-			var textField:TextField = new TextField();
-			textField.text = name;
-			textField.width = width - 1;
-			textField.height = height - 1;
-			textField.selectable = false;
-			textField.cacheAsBitmap = true;
-			textField.autoSize = TextFieldAutoSize.CENTER;
-			_ani.addChild(textField);
-
-			graphics.lineStyle(4, 0xaeaeae, 1, true);
-			graphics.beginFill(color, 1);
-			graphics.drawRoundRect(0, 0, width, height, 10);
-			graphics.endFill();
-			ani.cacheAsBitmap = true;
-			ani.addEventListener(MouseEvent.CLICK, spawnNewEntity)
+			_timeToCheck = timeToCheck
 		}
+
 		private var count:uint = 0;
-		private function spawnNewEntity(event:MouseEvent):void {
+		private var _timer:int = -1;
+
+		private function spawnNewEntity():void {
 			var size:int = 40 + Math.floor(Math.random() * 80);
 			var boxEntity:BoxEntity = new BoxEntity("" + count++, 1, 1, size, size);
 			var world:World = App.world;
 			world.addEntity(boxEntity);
-			while(world.isCollided(boxEntity)){
+			while (world.isCollided(boxEntity)) {
 				var deviceSize:Rectangle = App.deviceSize;
-				boxEntity.ani.x = Math.random() *deviceSize.width - boxEntity.ani.width;
-				boxEntity.ani.y = Math.random() *deviceSize.height - boxEntity.ani.height;
+				boxEntity.ani.x = Math.random() * deviceSize.width - boxEntity.ani.width;
+				boxEntity.ani.y = Math.random() * deviceSize.height - boxEntity.ani.height;
 			}
 		}
 
@@ -90,5 +68,26 @@ package app.game.entities {
 
 		public function dispose():void {
 		}
+
+		public function action():void {
+			if (_timer < 0) {
+				_timer = getTimer();
+
+			}
+			if (getTimer() - _timer > _timeToCheck) {
+				var forEach:Array = App.world.getForEach(SquareGetter);
+				var square:uint = 0;
+				for each(var squareGetter:SquareGetter in forEach) {
+					square += squareGetter.square;
+				}
+				if (square < 1500) {
+					spawnNewEntity();
+				}
+				_timer =-1;
+			}
+
+		}
+
+		//			trace("square", square);
 	}
 }

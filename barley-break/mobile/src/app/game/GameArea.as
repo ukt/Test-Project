@@ -1,6 +1,7 @@
 package app.game {
 	import app.World;
 	import app.game.entities.BoxEntity;
+	import app.game.entities.BoxEntityAutoSpawner;
 	import app.game.entities.BoxEntitySpawner;
 	import app.game.entities.StaticBoxEntity;
 
@@ -19,7 +20,8 @@ package app.game {
 			world.addEntity(new StaticBoxEntity("Box", 4, 10, 60, 60));
 			world.addEntity(new StaticBoxEntity("Box", 5, 14, 140, 60));
 			world.addEntity(new StaticBoxEntity("Box", 6, 5, 60, 60));
-			world.addEntity(new BoxEntitySpawner("Spawn", 5, 8, 100, 60));
+			world.addEntity(new BoxEntitySpawner("Spawn", 6, 5, 100, 60));
+			world.addEntity(new BoxEntityAutoSpawner("AutoSpawn"));
 		}
 	}
 }

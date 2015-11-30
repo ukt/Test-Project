@@ -1,5 +1,7 @@
 package app.game.entities {
 	import app.App;
+	import app.App;
+	import app.World;
 	import app.accelerometer.AccelerometerVO;
 
 	import flash.display.Graphics;
@@ -7,8 +9,9 @@ package app.game.entities {
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.utils.getTimer;
 
-	public class BoxEntity implements Entity {
+	public class BoxEntity implements Entity, Actioner, SquareGetter {
 		private var _ani:MovieClip = new MovieClip();
 		private var _speedX:Number = 0;
 		private var _speedY:Number = 0;
@@ -16,20 +19,23 @@ package app.game.entities {
 
 
 		private var accelerometerVO:AccelerometerVO;
-		private var square:Number = 0;
+		private var _square:Number = 0;
 
 		private var name:String;
 
 		private var acceleration:Number;
+
+		public var color:uint;
+		private var _time:uint;
 
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			this.name = name;
 			width = width*App.appScale;
 			height = height*App.appScale;
 			maxSpeed = 60;
-			square = Math.sqrt(width * height);
+			_square = Math.sqrt(width * height);
 			var gi:Number = 9.8 + Math.random()*5;
-			acceleration = (gi * (1 / square));
+			acceleration = (gi * (1 / _square));
 			var textField:TextField = new TextField();
 			textField.text = name;
 			textField.width = width - 1;
@@ -37,14 +43,23 @@ package app.game.entities {
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-			//			_ani.addChild(textField);
+//						_ani.addChild(textField);
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
 			trace(x, y);
 			var graphics:Graphics = _ani.graphics;
-			var colorArray:Array = [0xFFFF33, 0x79DCF4, 0x0000ff, 0xFF3333, 0xFFCC33, 0x99CC33];
+			var colorArray:Array = [0xB03838,
+				0xB038A2,
+				0x7A38B0,
+				0x3848B0,
+				0x38AEB0,
+				0x99CC33,
+				0x38B06C,
+				0xB09038,
+				0xB03838
+			];
 			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);
-			var color:uint = colorArray[randomColorID];
+			color = colorArray[randomColorID];
 			graphics.lineStyle(2, 0xcecece, 1, true);
 			graphics.beginFill(color, 1);
 			graphics.drawRoundRect(0, 0, width, height, 10);
@@ -55,14 +70,12 @@ package app.game.entities {
 
 		private function onClick(event:MouseEvent):void {
 			App.world.updateAccelerometerData();
-			setXPosition(ani.x - 2);
-			//			ani.y -= 1;
 		}
 
 		public function update():void {
 			this.accelerometerVO = App.world.accelerometerVO;
-			_speedX += maxSpeed * accelerometerVO.accelerationX * -1 * acceleration;
-			_speedY += maxSpeed * accelerometerVO.accelerationY * acceleration;
+			_speedX += calculateAccelerationByX();
+			_speedY += calculateAccelerationByY();
 			_speedX = Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
 			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
 			var maxWhileX:int = 5;
@@ -73,7 +86,9 @@ package app.game.entities {
 						_speedX *= .150;
 						moveToPrevXPosition();
 					}
-					setXPosition(ani.x + _speedX);
+					if(!setXPosition(ani.x + _speedX)){
+						_speedX *= .150;
+					}
 				} while (App.world.isCollided(this) && maxWhileX-- > 0);
 				if (App.world.isCollided(this)) {
 					moveToPrevXPosition();
@@ -85,11 +100,66 @@ package app.game.entities {
 						_speedY *= .150;
 						moveToPrevYPosition();
 					}
-					setYPosition(ani.y + _speedY);
+
+					if(!setYPosition(ani.y + _speedY)){
+						_speedY *= .150;
+					}
 				} while (App.world.isCollided(this) && maxWhileY-- > 0);
 				if (App.world.isCollided(this)) {
 					moveToPrevYPosition();
 				}
+			}
+		}
+
+		private function calculateAccelerationByX():Number {
+			return maxSpeed * accelerometerVO.accelerationX * -1 * acceleration;
+		}
+
+		private function calculateAccelerationByY():Number {
+			return maxSpeed * accelerometerVO.accelerationY * acceleration;
+		}
+
+		public function action():void {
+			var entity:BoxEntity;
+			var timer:int = getTimer();
+//			if(Math.abs(_speedX)>calculateAccelerationByX() || Math.abs(_speedY)>calculateAccelerationByY()){
+			if(Math.abs(_speedX)>3 || Math.abs(_speedY)>3){
+				_time = timer;
+				return;
+			} else if(timer - _time<2000){
+				return;
+			}
+			var collideMove:int = 5;
+			setXPosition(ani.x + collideMove);
+			entity = App.world.collide(this) as BoxEntity;
+			moveToPrevXPosition();
+			if (entity && entity.color == color) {
+				App.world.removeEntity(entity);
+				App.world.removeEntity(this);
+			}
+
+			setXPosition(ani.x - collideMove);
+			entity = App.world.collide(this) as BoxEntity;
+			moveToPrevXPosition();
+			if (entity && entity.color == color) {
+				App.world.removeEntity(entity);
+				App.world.removeEntity(this);
+			}
+
+			setYPosition(ani.y + collideMove);
+			entity = App.world.collide(this) as BoxEntity;
+			moveToPrevYPosition();
+			if (entity && entity.color == color) {
+				App.world.removeEntity(entity);
+				App.world.removeEntity(this);
+			}
+
+			setYPosition(ani.y - collideMove);
+			entity = App.world.collide(this) as BoxEntity;
+			moveToPrevYPosition();
+			if (entity && entity.color == color) {
+				App.world.removeEntity(entity);
+				App.world.removeEntity(this);
 			}
 		}
 
@@ -130,26 +200,30 @@ package app.game.entities {
 			ani.y = _prevY;
 		}
 
-		private function setXPosition(newX:Number):void {
+		private function setXPosition(newX:Number):Boolean {
 			_prevX = ani.x;
 			if (newX > 0 && newX + ani.width < App.deviceSize.width) {
 				ani.x = newX;
+				return true;
 			} else if (newX < 0) {
 				ani.x = 1;
 			} else if (newX + ani.width > App.deviceSize.width) {
 				ani.x = App.deviceSize.width - (ani.width + 1);
 			}
+			return false;
 		}
 
-		private function setYPosition(newY:Number):void {
+		private function setYPosition(newY:Number):Boolean {
 			_prevY = ani.y;
 			if (newY > 0 && newY + ani.height < App.deviceSize.height) {
 				ani.y = newY;
+				return true;
 			} else if (newY < 0) {
 				ani.y = 1;
 			} else if (newY + ani.width > App.deviceSize.height) {
 				ani.y = App.deviceSize.height - (ani.height + 1);
 			}
+			return false;
 		}
 
 		public function get ani():MovieClip {
@@ -157,6 +231,14 @@ package app.game.entities {
 		}
 
 		public function dispose():void {
+			if(_ani.parent){
+				_ani.removeEventListener(MouseEvent.CLICK, onClick);
+				_ani.parent.removeChild(_ani);
+			}
+		}
+
+		public function get square():uint {
+			return this._square;
 		}
 	}
 }
