@@ -1,0 +1,3 @@
+[submodule "barley-break/loka-lib"]
+	path = barley-break/loka-lib
+	url = https://github.com/ukt/loka-lib.git
