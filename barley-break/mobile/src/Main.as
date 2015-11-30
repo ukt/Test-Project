@@ -10,6 +10,8 @@ package {
 			new App(this);
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
+//			stage.scaleMode = StageScaleMode.EXACT_FIT;
+			stage.frameRate = 60;
 		}
 	}
 }

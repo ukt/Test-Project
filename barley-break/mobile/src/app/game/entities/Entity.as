@@ -6,7 +6,7 @@ package app.game.entities {
 	public interface Entity {
 		function update():void;
 
-		function collide(entity:Entity):void;
+		function collide(entity:Entity):Boolean;
 
 		function get ani():MovieClip
 	}

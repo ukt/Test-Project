@@ -20,8 +20,16 @@ package app {
 			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			var accelerometer:Accelerometer = new Accelerometer();
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
+			updateAccelerometerData();
 		}
 
+		public function updateAccelerometerData():void {
+			var accelerometerEvent:AccelerometerEvent = new AccelerometerEvent(AccelerometerEvent.UPDATE);
+			accelerometerEvent.accelerationX = Math.random() * 2 - 1;
+			accelerometerEvent.accelerationY = Math.random() * 2 - 1;
+			accelerometerEvent.accelerationZ = Math.random() * 2 - 1;
+			updateAccelerometer(accelerometerEvent)
+		}
 
 		private function updateAccelerometer(event:AccelerometerEvent):void {
 			accelerometerVO = new AccelerometerVO();
@@ -29,18 +37,29 @@ package app {
 			accelerometerVO.accelerationY = event.accelerationY;
 			accelerometerVO.accelerationZ = event.accelerationZ;
 
-			App.tf.text =   "accelerationX: " + accelerometerVO.accelerationX + "\n" +
-							"accelerationY: " + accelerometerVO.accelerationY + "\n";
+			App.tf.text = "accelerationX: " + accelerometerVO.accelerationX + "\n" + "accelerationY: " + accelerometerVO.accelerationY + "\n";
 
+		}
+
+		public function isCollided(entityToCollide:Entity):Boolean {
+			for each(var entity:Entity in entities) {
+				if (entity.collide(entityToCollide)) {
+					return true;
+				}
+			}
+			return false;
 		}
 
 		private function onEnterFrame(event:Event):void {
 			for each(var entity1:Entity in entities) {
 				entity1.update();
+			}
+			for each(var entity:Entity in entities) {
 				for each(var entity2:Entity in entities) {
-					entity2.collide(entity1);
+					entity2.collide(entity);
 				}
 			}
+
 		}
 
 		public function addEntity(entity:Entity):void {

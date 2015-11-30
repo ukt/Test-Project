@@ -6,93 +6,153 @@ package app.game.entities {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 
 	public class BoxEntity implements Entity {
 		private var _ani:MovieClip = new MovieClip();
 		private var _speedX:Number = 0;
 		private var _speedY:Number = 0;
-		private var maxSpeed:Number = 10 + Math.random() * 2;
+		private var maxSpeed:Number;// = 20 + Math.random() * ;
 
-		private var _aniXOffset:Number = 0;
-		private var _aniYOffset:Number = 0;
 
-		public function BoxEntity(name:String, x:Number, y:Number) {
+		private var accelerometerVO:AccelerometerVO;
+		private var square:Number = 0;
+
+		private var name:String;
+
+		private var acceleration:Number;
+
+		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+			this.name = name;
+			maxSpeed = 60;
+			square = Math.sqrt(width * height);
+			var gi:Number = 9.8 + Math.random();
+			acceleration = (gi * (1 / square));
 			var textField:TextField = new TextField();
 			textField.text = name;
-			//			_ani.addChild(textField);
-			_ani.x = x * 20;
-			_ani.y = y * 20;
+			textField.width = width - 1;
+			textField.height = height - 1;
+			textField.selectable = false;
+			textField.cacheAsBitmap = true;
+			textField.autoSize = TextFieldAutoSize.CENTER;
+//			_ani.addChild(textField);
+			_ani.x = x * width + x * 15;
+			_ani.y = y * height + y * 15;
 			trace(x, y);
 			var graphics:Graphics = _ani.graphics;
-			graphics.beginFill(0x0000FF + Math.random() * 10000, .3);
-			graphics.drawRect(0, 0, 20, 20);
+			var colorArray:Array = [0xFFFF33, 0x79DCF4, 0x0000ff, 0xFF3333, 0xFFCC33, 0x99CC33];
+			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);
+			var color:uint = colorArray[randomColorID];
+			graphics.lineStyle(2, 0xcecece, 1, true);
+			graphics.beginFill(color, 1);
+			graphics.drawRoundRect(0, 0, width, height, 10);
 			graphics.endFill();
 			ani.cacheAsBitmap = true;
 			_ani.addEventListener(MouseEvent.CLICK, onClick)
 		}
 
 		private function onClick(event:MouseEvent):void {
-			var accelerometerVO:AccelerometerVO = App.world.accelerometerVO;
-			accelerometerVO.accelerationX += (Math.random()-.5)*.05;
-			accelerometerVO.accelerationY += (Math.random()-.5)*.05;
+			App.world.updateAccelerometerData();
+			setXPosition(ani.x - 2);
+			//			ani.y -= 1;
 		}
-
-		private var accelerometerVO:AccelerometerVO;
 
 		public function update():void {
 			this.accelerometerVO = App.world.accelerometerVO;
-			_speedX += maxSpeed * accelerometerVO.accelerationX;
-			_speedY += maxSpeed * accelerometerVO.accelerationY;
-			_speedX =Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
-			_speedY =Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
-			if (_ani.x >= 0 && _ani.x + 20 <= ani.stage.stageWidth) {
-				_ani.x += _speedX;
+			_speedX += maxSpeed * accelerometerVO.accelerationX * -1 * acceleration;
+			_speedY += maxSpeed * accelerometerVO.accelerationY * acceleration;
+			_speedX = Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
+			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
+			var maxWhileX:int = 5;
+			var maxWhileY:int = 5;
+
+			do {
+				if (App.world.isCollided(this)) {
+					_speedX *= .150;
+					moveToPrevXPosition();
+				}
+				setXPosition(ani.x + _speedX);
+			} while (App.world.isCollided(this) && maxWhileX-- > 0);
+			if (App.world.isCollided(this)) {
+				moveToPrevXPosition();
 			}
-			if(_ani.x <= 0){
-				_ani.x = 1;
-			} else if(_ani.x + 20 >= ani.stage.stageWidth){
-				_ani.x = ani.stage.stageWidth - 21;
+			do {
+				if (App.world.isCollided(this)) {
+					_speedY *= .150;
+					moveToPrevYPosition();
+				}
+				setYPosition(ani.y + _speedY);
+			} while (App.world.isCollided(this) && maxWhileY-- > 0);
+			if (App.world.isCollided(this)) {
+				moveToPrevYPosition();
 			}
-			if (_ani.y >= 0 && _ani.y + 20 <= ani.stage.stageHeight) {
-				_ani.y += _speedY;
+			/*
+			 while (App.world.isCollided(this) && maxWhile-->0) {
+			 moveToPrevPosition();
+			 setXPosition(ani.x + Math.random()*_speedX-_speedX*.5);
+			 setYPosition(ani.y + Math.random()*_speedY-_speedY*.5);
+			 }
+			 if (!isCollided /!*&& false*!/) {
+
+			 }*/
+		}
+
+		public function collide(entity:Entity):Boolean {
+			var ani2:MovieClip = entity.ani;
+			if (entity === this) {
+				return false;
 			}
-			if(_ani.y <= 0){
-				_ani.y = 1;
-			} else if(_ani.y + 20 >= ani.stage.stageHeight){
-				_ani.y = ani.stage.stageHeight - 21;
+			var isAniInCubeByXAsLeft:Boolean = ani.x <= ani2.x && ani.x + ani.width >= ani2.x;
+			var isAniInCubeByXAsRight:Boolean = ani.x >= ani2.x && ani.x <= ani2.x + ani2.width;
+			var isAniInCubeByYAsTop:Boolean = ani.y >= ani2.y && ani.y <= ani2.y + ani2.height;
+			var isAniInCubeByYAsBottom:Boolean = ani.y <= ani2.y && ani.y + ani.height >= ani2.y;
+
+			var isCollided:Boolean = false;
+			if (isAniInCubeByXAsLeft && isAniInCubeByYAsTop) {
+				isCollided = true;
+			}
+			if (isAniInCubeByXAsLeft && isAniInCubeByYAsBottom) {
+				isCollided = true;
+			}
+			if (isAniInCubeByXAsRight && isAniInCubeByYAsTop) {
+				isCollided = true;
+			}
+			if (isAniInCubeByXAsRight && isAniInCubeByYAsBottom) {
+				isCollided = true;
+			}
+			return isCollided;
+		}
+
+		private var _prevX:Number = 0;
+		private var _prevY:Number = 0;
+
+		private function moveToPrevXPosition():void {
+			ani.x = _prevX;
+		}
+
+		private function moveToPrevYPosition():void {
+			ani.y = _prevY;
+		}
+
+		private function setXPosition(newX:Number):void {
+			_prevX = ani.x;
+			if (newX > 0 && newX + ani.width < App.deviceSize.width) {
+				ani.x = newX;
+			} else if (newX <= 0) {
+				ani.x = 1;//Math.random();
+			} else if (newX + ani.width >= App.deviceSize.width) {
+				ani.x = App.deviceSize.width - (ani.width + /*Math.random() - 1*/1);
 			}
 		}
 
-		public function collide(entity:Entity):void {
-			var isAniInCubeByX:Boolean = ani.x - entity.ani.x < 0 && ani.x + 20 - entity.ani.x > 0;
-			var isAniInCubeByY:Boolean = ani.y - entity.ani.y < 0 && ani.y + 20 - entity.ani.y > 0;
-			if (isAniInCubeByX && isAniInCubeByY) {
-				if(isAniInCubeByX ) {
-					ani.x -= 1 + Math.random() * .2;
-					ani.x += 1 + Math.random() * .2;
-				}
-
-				if(isAniInCubeByX ) {
-					ani.x -= 1 + Math.random() * .2;
-					ani.x += 1 + Math.random() * .2;
-				}
-			} else if(ani.x - entity.ani.x > 0){
-				ani.x += 1 + Math.random()*.2;
-			}
-			if (ani.y - entity.ani.y < 0) {
-				ani.y -= 1 + Math.random()*.2;
-			} else if(ani.y - entity.ani.y > 0){
-				ani.y += 1 + Math.random()*.2;
-			}
-			if(_ani.x <= 0){
-				_ani.x = 1;
-			} else if(_ani.x + 20 >= ani.stage.stageWidth){
-				_ani.x = ani.stage.stageWidth - 21;
-			}
-			if(_ani.y <= 0){
-				_ani.y = 1;
-			} else if(_ani.y + 20 >= ani.stage.stageHeight){
-				_ani.y = ani.stage.stageHeight - 21;
+		private function setYPosition(newY:Number):void {
+			_prevY = ani.y;
+			if (newY > 0 && newY + ani.height < App.deviceSize.height) {
+				ani.y = newY;
+			} else if (newY <= 0) {
+				ani.y = 1;//Math.random();
+			} else if (newY + ani.width >= App.deviceSize.height) {
+				ani.y = App.deviceSize.height - (ani.height + /*Math.random() - 1*/1);
 			}
 		}
 
