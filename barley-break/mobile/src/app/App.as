@@ -31,8 +31,8 @@ package app {
 			var guiSize:Rectangle = new Rectangle(0, 0, 1024, 600);
 			var stage:Stage = main.stage;
 			deviceSize = new Rectangle(0, 0,
-					Math.min(stage.fullScreenWidth, stage.fullScreenHeight),
-					Math.max(stage.fullScreenWidth, stage.fullScreenHeight)
+					Math.max(stage.fullScreenWidth, stage.fullScreenHeight),
+					Math.min(stage.fullScreenWidth, stage.fullScreenHeight)
 			);
 
 			appSize = guiSize.clone();

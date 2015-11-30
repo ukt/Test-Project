@@ -14,7 +14,9 @@ package {
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 //			stage.scaleMode = StageScaleMode.EXACT_FIT;
 			stage.frameRate = 60;
-			addChild(new FPSGraphic());
+			var fpsGraphic:FPSGraphic = new FPSGraphic();
+			addChild(fpsGraphic);
+			fpsGraphic.scaleX = fpsGraphic.scaleY = App.appScale;
 		}
 	}
 }
