@@ -1,3 +1,3 @@
-[submodule "barley-break/loka-lib"]
-	path = barley-break/loka-lib
+[submodule "barley-break/mobile/loka-lib"]
+	path = barley-break/mobile/loka-lib
 	url = https://github.com/ukt/loka-lib.git
