@@ -5,7 +5,7 @@ package {
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 
-	import utils.loka.asUtils.FPSGraphic;
+	import loka.asUtils.FPSGraphic;
 
 	public class Main extends Sprite{
 		public function Main() {
