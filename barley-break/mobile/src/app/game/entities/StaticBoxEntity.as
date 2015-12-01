@@ -1,5 +1,6 @@
 package app.game.entities {
 	import app.App;
+	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -10,8 +11,10 @@ package app.game.entities {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
-
-
+		private var _hitArea:HitArea;
+		public function get hitArea():HitArea {
+			return _hitArea;
+		}
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			width = width*App.appScale;
 			height = height*App.appScale;

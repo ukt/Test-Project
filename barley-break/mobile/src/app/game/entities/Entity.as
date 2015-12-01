@@ -1,4 +1,6 @@
 package app.game.entities {
+	import app.game.hitArea.HitArea;
+
 	import flash.display.MovieClip;
 
 	public interface Entity extends Disposer{
@@ -7,5 +9,6 @@ package app.game.entities {
 		function collide(entity:Entity):Boolean;
 
 		function get ani():MovieClip
+		function get hitArea():HitArea
 	}
 }

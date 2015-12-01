@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.World;
+	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -13,9 +14,10 @@ package app.game.entities {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
-
+		private var _hitArea:HitArea;
 
 		public function BoxEntitySpawner(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+			_hitArea = new HitArea(this);
 			this.name = name;
 			width = width*App.appScale;
 			height = height*App.appScale;
@@ -89,6 +91,9 @@ package app.game.entities {
 		}
 
 		public function dispose():void {
+		}
+		public function get hitArea():HitArea {
+			return _hitArea;
 		}
 	}
 }

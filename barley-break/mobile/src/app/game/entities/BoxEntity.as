@@ -3,6 +3,7 @@ package app.game.entities {
 	import app.App;
 	import app.World;
 	import app.accelerometer.AccelerometerVO;
+	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -27,7 +28,7 @@ package app.game.entities {
 
 		public var color:uint;
 		private var _time:uint;
-
+		private var _hitArea:HitArea;
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			this.name = name;
 			width = width*App.appScale;
@@ -52,6 +53,10 @@ package app.game.entities {
 				0xB038A2,
 				0x7A38B0,
 				0x3848B0,
+				0x000,
+				0xfff,
+				0xcecece,
+				0x888888,
 				0x38AEB0,
 				0x99CC33,
 				0x38B06C,
@@ -239,6 +244,10 @@ package app.game.entities {
 
 		public function get square():uint {
 			return this._square;
+		}
+
+		public function get hitArea():HitArea {
+			return _hitArea;
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.World;
+	import app.game.hitArea.HitArea;
 
 	import flash.display.MovieClip;
 	import flash.geom.Rectangle;
@@ -9,9 +10,11 @@ package app.game.entities {
 	public class BoxEntityAutoSpawner implements Entity, Actioner {
 		private var _ani:MovieClip = new MovieClip();
 		private var _timeToCheck:int;
-
+		private var _hitArea:HitArea;
 		private var name:String;
-
+		public function get hitArea():HitArea {
+			return _hitArea;
+		}
 
 		public function BoxEntityAutoSpawner(name:String, timeToCheck:int = 5000) {
 			this.name = name;

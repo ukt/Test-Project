@@ -1,5 +1,6 @@
 package app {
 	import app.accelerometer.AccelerometerVO;
+	import app.collider.Collider;
 	import app.game.entities.Actioner;
 	import app.game.entities.Actioner;
 	import app.game.entities.Entity;
@@ -10,11 +11,14 @@ package app {
 	import flash.events.Event;
 	import flash.sensors.Accelerometer;
 
+	import loka.asUtils.collider.Collide;
+
 	public class World {
 		private var main:Sprite;
 		private var entities:Vector.<Entity> = new <Entity>[];
 		private var functions:Vector.<Function> = new <Function>[];
 		public var accelerometerVO:AccelerometerVO = new AccelerometerVO();
+		public var collider:Collider = new Collider();
 
 		public function World() {
 		}
@@ -40,7 +44,6 @@ package app {
 			accelerometerVO.accelerationX = event.accelerationX;
 			accelerometerVO.accelerationY = event.accelerationY;
 			accelerometerVO.accelerationZ = event.accelerationZ;
-
 			App.tf.text = "accelerationX: " + accelerometerVO.accelerationX + "\n" + "accelerationY: " + accelerometerVO.accelerationY + "\n";
 
 		}
