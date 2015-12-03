@@ -5,10 +5,11 @@ package app.game.entities {
 
 	public interface Entity extends Disposer{
 		function update():void;
+		function initialize():void;
 
 		function collide(entity:Entity):Boolean;
 
 		function get ani():MovieClip
-		function get hitArea():HitArea
+
 	}
 }

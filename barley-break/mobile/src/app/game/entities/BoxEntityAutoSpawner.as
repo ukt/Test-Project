@@ -92,5 +92,7 @@ package app.game.entities {
 		}
 
 		//			trace("square", square);
+		public function initialize():void {
+		}
 	}
 }

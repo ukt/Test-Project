@@ -3,7 +3,8 @@ package app.game {
 	import app.game.entities.BoxEntity;
 	import app.game.entities.BoxEntityAutoSpawner;
 	import app.game.entities.BoxEntitySpawner;
-	import app.game.entities.StaticBoxEntity;
+import app.game.entities.HitAreaDrawerEntity;
+import app.game.entities.StaticBoxEntity;
 
 	public class GameArea {
 		public function GameArea(world:World) {
@@ -22,6 +23,7 @@ package app.game {
 			world.addEntity(new StaticBoxEntity("Box", 6, 5, 60, 60));
 			world.addEntity(new BoxEntitySpawner("Spawn", 6, 5, 100, 60));
 			world.addEntity(new BoxEntityAutoSpawner("AutoSpawn"));
+			world.addEntity(new HitAreaDrawerEntity());
 		}
 	}
 }

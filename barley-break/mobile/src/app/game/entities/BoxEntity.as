@@ -1,18 +1,18 @@
 package app.game.entities {
-	import app.App;
-	import app.App;
-	import app.World;
-	import app.accelerometer.AccelerometerVO;
-	import app.game.hitArea.HitArea;
+import app.App;
+import app.accelerometer.AccelerometerVO;
+import app.game.hitArea.HitArea;
+import app.game.hitArea.HitSegment;
 
-	import flash.display.Graphics;
-	import flash.display.MovieClip;
-	import flash.events.MouseEvent;
-	import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
-	import flash.utils.getTimer;
+import flash.display.Graphics;
+import flash.display.MovieClip;
+import flash.events.MouseEvent;
+import flash.geom.Point;
+import flash.text.TextField;
+import flash.text.TextFieldAutoSize;
+import flash.utils.getTimer;
 
-	public class BoxEntity implements Entity, Actioner, SquareGetter {
+public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity {
 		private var _ani:MovieClip = new MovieClip();
 		private var _speedX:Number = 0;
 		private var _speedY:Number = 0;
@@ -73,6 +73,38 @@ package app.game.entities {
 			_ani.addEventListener(MouseEvent.CLICK, onClick)
 		}
 
+		public function initialize():void {
+			_hitArea = new HitArea(this);
+			_hitArea.addSegment(
+					new HitSegment(
+							new Point(_ani.x, _ani.y),
+							new Point(_ani.x, _ani.y + _ani.height)
+							, 2
+					)
+			);
+			_hitArea.addSegment(
+					new HitSegment(
+							new Point(_ani.x, _ani.y),
+							new Point(_ani.x + _ani.width, _ani.y)
+							, 2
+					)
+			);
+			_hitArea.addSegment(
+					new HitSegment(
+							new Point(_ani.x + _ani.width, _ani.y),
+							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
+							, 2
+					)
+			);
+			_hitArea.addSegment(
+					new HitSegment(
+							new Point(_ani.x, _ani.y + _ani.height),
+							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
+							, 2
+					)
+			);
+		}
+
 		private function onClick(event:MouseEvent):void {
 			App.world.updateAccelerometerData();
 		}
@@ -91,7 +123,7 @@ package app.game.entities {
 						_speedX *= .150;
 						moveToPrevXPosition();
 					}
-					if(!setXPosition(ani.x + _speedX)){
+					if(!setXPosition(_speedX)){
 						_speedX *= .150;
 					}
 				} while (App.world.isCollided(this) && maxWhileX-- > 0);
@@ -106,7 +138,7 @@ package app.game.entities {
 						moveToPrevYPosition();
 					}
 
-					if(!setYPosition(ani.y + _speedY)){
+					if(!setYPosition(_speedY)){
 						_speedY *= .150;
 					}
 				} while (App.world.isCollided(this) && maxWhileY-- > 0);
@@ -114,6 +146,8 @@ package app.game.entities {
 					moveToPrevYPosition();
 				}
 			}
+			_ani.x = hitArea.segments[0].point1.x;
+			_ani.y = hitArea.segments[0].point1.y;
 		}
 
 		private function calculateAccelerationByX():Number {
@@ -135,7 +169,7 @@ package app.game.entities {
 				return;
 			}
 			var collideMove:int = 5;
-			setXPosition(ani.x + collideMove);
+			setXPosition(collideMove);
 			entity = App.world.collide(this) as BoxEntity;
 			moveToPrevXPosition();
 			if (entity && entity.color == color) {
@@ -143,7 +177,7 @@ package app.game.entities {
 				App.world.removeEntity(this);
 			}
 
-			setXPosition(ani.x - collideMove);
+			setXPosition(- collideMove);
 			entity = App.world.collide(this) as BoxEntity;
 			moveToPrevXPosition();
 			if (entity && entity.color == color) {
@@ -151,7 +185,7 @@ package app.game.entities {
 				App.world.removeEntity(this);
 			}
 
-			setYPosition(ani.y + collideMove);
+			setYPosition(collideMove);
 			entity = App.world.collide(this) as BoxEntity;
 			moveToPrevYPosition();
 			if (entity && entity.color == color) {
@@ -159,7 +193,7 @@ package app.game.entities {
 				App.world.removeEntity(this);
 			}
 
-			setYPosition(ani.y - collideMove);
+			setYPosition(- collideMove);
 			entity = App.world.collide(this) as BoxEntity;
 			moveToPrevYPosition();
 			if (entity && entity.color == color) {
@@ -205,28 +239,30 @@ package app.game.entities {
 			ani.y = _prevY;
 		}
 
-		private function setXPosition(newX:Number):Boolean {
+		private function setXPosition(xOffset:Number):Boolean {
 			_prevX = ani.x;
-			if (newX > 0 && newX + ani.width < App.deviceSize.width) {
-				ani.x = newX;
+			var possibleNewX:Number = hitArea.segments[0].point1.x + xOffset;
+			if (possibleNewX > 0 && possibleNewX + ani.width < App.deviceSize.width) {
+				hitArea.moveXPosition(xOffset);
 				return true;
-			} else if (newX < 0) {
-				ani.x = 1;
-			} else if (newX + ani.width > App.deviceSize.width) {
-				ani.x = App.deviceSize.width - (ani.width + 1);
+			} else if (possibleNewX < 0) {
+//				ani.x = 1;
+			} else if (possibleNewX + ani.width > App.deviceSize.width) {
+//				ani.x = App.deviceSize.width - (ani.width + 1);
 			}
 			return false;
 		}
 
-		private function setYPosition(newY:Number):Boolean {
+		private function setYPosition(yOffset:Number):Boolean {
 			_prevY = ani.y;
-			if (newY > 0 && newY + ani.height < App.deviceSize.height) {
-				ani.y = newY;
+			var possibleNewY:Number = hitArea.segments[0].point1.x + yOffset;
+			if (possibleNewY > 0 && possibleNewY + ani.height < App.deviceSize.height) {
+				hitArea.moveYPosition(yOffset);
 				return true;
-			} else if (newY < 0) {
-				ani.y = 1;
-			} else if (newY + ani.width > App.deviceSize.height) {
-				ani.y = App.deviceSize.height - (ani.height + 1);
+			} else if (possibleNewY < 0) {
+//				ani.y = 1;
+			} else if (possibleNewY + ani.width > App.deviceSize.height) {
+//				ani.y = App.deviceSize.height - (ani.height + 1);
 			}
 			return false;
 		}

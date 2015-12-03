@@ -101,6 +101,7 @@ package app {
 		}
 
 		public function addEntity(entity:Entity):void {
+			entity.initialize();
 			entities.push(entity);
 			main.addChild(entity.ani);
 		}

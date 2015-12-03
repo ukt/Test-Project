@@ -95,5 +95,8 @@ package app.game.entities {
 		public function get hitArea():HitArea {
 			return _hitArea;
 		}
+
+		public function initialize():void {
+		}
 	}
 }
