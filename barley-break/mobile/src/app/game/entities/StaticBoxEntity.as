@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.SpeedAdder;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
 
@@ -10,7 +11,7 @@ package app.game.entities {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
-	public class StaticBoxEntity implements Entity {
+	public class StaticBoxEntity implements Entity, SpeedAdder {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
@@ -18,9 +19,10 @@ package app.game.entities {
 		public function get hitArea():HitArea {
 			return _hitArea;
 		}
+
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
-			width = width*App.appScale;
-			height = height*App.appScale;
+			width = width * App.appScale;
+			height = height * App.appScale;
 			this.name = name + x + "_" + y;
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
@@ -46,36 +48,18 @@ package app.game.entities {
 
 		public function initialize():void {
 			_hitArea = new HitArea(this);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y),
-							new Point(_ani.x, _ani.y + _ani.height)
-							, 2
-					)
-			);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y),
-							new Point(_ani.x + _ani.width, _ani.y)
-							, 2
-					)
-			);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x + _ani.width, _ani.y),
-							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
-							, 2
-					)
-			);
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x, _ani.y + _ani.height), 2));
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x + _ani.width, _ani.y), 2));
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x + _ani.width, _ani.y), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
 
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y + _ani.height),
-							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
-							, 2
-					)
-			);
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y + _ani.height), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
 
+		}
+
+		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
+			if(target is SpeedAdder){
+				SpeedAdder(target).addSpeed(this, xSpeed, ySpeed);
+			}
 		}
 
 		public function update():void {

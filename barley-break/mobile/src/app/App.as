@@ -1,5 +1,6 @@
 package app {
-	import app.game.GameArea;
+	import app.states.GameState;
+	import app.states.MenuState;
 
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -7,6 +8,8 @@ package app {
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+
+	import loka.app.view.stateMachine.StateMachine;
 
 	public class App {
 		public static const world:World = new World();
@@ -20,20 +23,29 @@ package app {
 		public function App(main:Sprite) {
 			App.main = main;
 			initializeAppGUI(main);
+			initializeUIStates(main);
 			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.LEFT;
 			tf.border = true;
 			main.addChild(tf);
 			main.addEventListener(Event.ENTER_FRAME, updateUI);
 			world.initialize(main);
-			new GameArea(world);
+
+//			new GameArea(world);
 		}
 
-		private function updateUI(event:Event):void {
+		private static function initializeUIStates(main:Sprite):void {
+			StateMachine.init(main);
+			StateMachine.registerState(new MenuState());
+			StateMachine.registerState(new GameState());
+			StateMachine.gotoState(MenuState.NAME);
+		}
+
+		private static function updateUI(event:Event):void {
 			tf.parent.addChild(tf);
 		}
 
-		private function initializeAppGUI(main:Sprite):void {
+		private static function initializeAppGUI(main:Sprite):void {
 			var guiSize:Rectangle = new Rectangle(0, 0, 1024, 600);
 			var stage:Stage = main.stage;
 			deviceSize = new Rectangle(0, 0,

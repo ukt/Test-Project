@@ -5,25 +5,39 @@ package app {
 	import app.game.entities.actions.Entity;
 	import app.game.hitArea.HitArea;
 
-	import flash.display.Sprite;
+	import flash.display.DisplayObjectContainer;
 	import flash.events.AccelerometerEvent;
 	import flash.events.Event;
 	import flash.sensors.Accelerometer;
 
 	public class World {
-		private var main:Sprite;
+		private var main:DisplayObjectContainer;
 		private var entities:Vector.<Entity> = new <Entity>[];
 		private var functions:Vector.<Function> = new <Function>[];
 		public var accelerometerVO:AccelerometerVO = new AccelerometerVO();
 		public var collider:Collider = new Collider();
-
+		private var accelerometer:Accelerometer = new Accelerometer();
 		public function World() {
 		}
 
-		public function initialize(main:Sprite):void {
+		public function dispose():void {
+			for each(var entity:Entity in entities){
+				removeEntity(entity);
+			}
+			if(this.main){
+				main.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+				accelerometer.removeEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
+				this.main = null;
+			}
+
+		}
+
+
+
+		public function initialize(main:DisplayObjectContainer):void {
+			dispose();
 			this.main = main;
 			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			var accelerometer:Accelerometer = new Accelerometer();
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 			updateAccelerometerData();
 		}
