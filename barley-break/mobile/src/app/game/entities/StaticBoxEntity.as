@@ -74,6 +74,9 @@ package app.game.entities {
 		}
 
 		public function dispose():void {
+			if (_ani.parent) {
+				_ani.parent.removeChild(_ani);
+			}
 		}
 	}
 }
