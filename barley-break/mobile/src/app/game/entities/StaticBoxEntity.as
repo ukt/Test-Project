@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.HittableEntity;
 	import app.game.entities.actions.SpeedAdder;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
@@ -8,10 +9,11 @@ package app.game.entities {
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.geom.Point;
+	import flash.system.Capabilities;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
-	public class StaticBoxEntity implements Entity, SpeedAdder {
+	public class StaticBoxEntity implements Entity, SpeedAdder, HittableEntity {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
@@ -21,11 +23,12 @@ package app.game.entities {
 		}
 
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+			_hitArea = new HitArea(this);
 			width = width * App.appScale;
 			height = height * App.appScale;
 			this.name = name + x + "_" + y;
-			_ani.x = x * width + x * 15;
-			_ani.y = y * height + y * 15;
+			_ani.x = x * width + x * 5;
+			_ani.y = y * height + y * 5;
 			trace(x, y);
 			var textField:TextField = new TextField();
 			textField.text = this.name;
@@ -34,7 +37,9 @@ package app.game.entities {
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-			_ani.addChild(textField);
+			if(Capabilities.isDebugger) {
+				_ani.addChild(textField);
+			}
 			var graphics:Graphics = _ani.graphics;
 			var colorArray:Array = [0xCECECE];
 			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);
@@ -51,7 +56,6 @@ package app.game.entities {
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x, _ani.y + _ani.height), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x + _ani.width, _ani.y), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x + _ani.width, _ani.y), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
-
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y + _ani.height), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
 
 		}

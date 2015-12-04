@@ -18,7 +18,10 @@ package app.states {
 		override public function init():void {
 			var gameBtn:MovieClip = new GameBtn(1, "First Game");
 			gameBtn.addEventListener(MouseEvent.CLICK, openGame);
-			DOC.addChild(gameBtn)
+			DOC.addChild(gameBtn);
+			gameBtn = new GameBtn(2, "Second Game");
+			gameBtn.addEventListener(MouseEvent.CLICK, openGame);
+			DOC.addChild(gameBtn);
 		}
 
 		private static function openGame(event:MouseEvent):void {

@@ -18,7 +18,7 @@ package app.game.entities {
 			return _hitArea;
 		}
 		public function HitAreaDrawerEntity() {
-
+			_hitArea = new HitArea(this)
 		}
 
 		public function initialize():void {
@@ -57,6 +57,7 @@ package app.game.entities {
 				}
 			});
 			_time = getTimer();
+			_ani.parent.addChild(_ani);
 		}
 
 		public function get ani():MovieClip {

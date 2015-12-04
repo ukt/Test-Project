@@ -14,6 +14,7 @@ package app.game.entities {
 	import flash.display.MovieClip;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.system.Capabilities;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.getTimer;
@@ -36,6 +37,7 @@ package app.game.entities {
 		private var _hitArea:HitArea;
 
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
+			_hitArea = new HitArea(this);
 			this.name = name;
 			width = width * App.appScale;
 			height = height * App.appScale;
@@ -50,9 +52,11 @@ package app.game.entities {
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-			_ani.addChild(textField);
-			_ani.x = x * width + x * 15;
-			_ani.y = y * height + y * 15;
+			if(Capabilities.isDebugger) {
+				_ani.addChild(textField);
+			}
+			_ani.x = x * width + x * 5 - width + 15;
+			_ani.y = y * height + y * 5 - height + 45;
 			trace(x, y);
 			var graphics:Graphics = _ani.graphics;
 			var colorArray:Array = [0xB03838, 0xB038A2, 0x7A38B0, 0x3848B0, 0x000, 0xfff, 0xcecece, 0x888888, 0x38AEB0, 0x99CC33, 0x38B06C, 0xB09038, 0xB03838];
@@ -79,6 +83,9 @@ package app.game.entities {
 		}
 
 		public function update():void {
+			if(hitArea.segments.length==0){
+				return
+			}
 			var world:World = App.world;
 			this.accelerometerVO = world.accelerometerVO;
 			_speedX += calculateAccelerationByX();

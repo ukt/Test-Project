@@ -2,6 +2,7 @@ package app.states {
 	import app.App;
 	import app.game.games.FirstGame;
 	import app.game.games.Game;
+	import app.game.games.SecondGame;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -31,7 +32,15 @@ package app.states {
 			switch (gameNumber) {
 				case 1:
 					game = new FirstGame(App.world, DOC);
+					break;
+				case 2:
+					game = new SecondGame(App.world, DOC);
+					break;
+				default :
+					game = new FirstGame(App.world, DOC);
+					break;
 			}
+
 			game.start();
 		}
 

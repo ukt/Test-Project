@@ -20,6 +20,7 @@ package app.game.entities {
 		}
 
 		public function BoxEntityAutoSpawner(name:String, timeToCheck:int = 5000) {
+			_hitArea = new HitArea(this);
 			this.name = name;
 			_timeToCheck = timeToCheck
 		}

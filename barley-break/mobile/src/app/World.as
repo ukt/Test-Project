@@ -24,6 +24,7 @@ package app {
 			for each(var entity:Entity in entities){
 				removeEntity(entity);
 			}
+			onEnterFrame();
 			if(this.main){
 				main.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 				accelerometer.removeEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
@@ -40,7 +41,19 @@ package app {
 			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 			updateAccelerometerData();
+//			initializeEntities();
+			/*for each(var entity:Entity in entities) {
+				main.addChild(entity.ani);
+				entity.initialize();
+				/!*if (entity is entityClass) {
+				 func.call(null, entity);
+				 }*!/
+			}*/
 		}
+
+		/*private function initializeEntities():void {
+
+		}*/
 
 		public function updateAccelerometerData():void {
 			var accelerometerEvent:AccelerometerEvent = new AccelerometerEvent(AccelerometerEvent.UPDATE);
@@ -67,7 +80,7 @@ package app {
 			return collide(entityToCollide).length > 0;
 		}
 
-		private function onEnterFrame(event:Event):void {
+		private function onEnterFrame(event:Event = null):void {
 			for each(var entity:Entity in entities) {
 				entity.update();
 			}
@@ -76,7 +89,6 @@ package app {
 					Actioner(action).action();
 				}
 			}
-
 			for each(var f:Function in functions) {
 				f.call();
 			}

@@ -8,7 +8,7 @@ package app.states.ui {
 		public function GameBtn(gameNumber:uint, text:String) {
 			super();
 			this.gameNumber = gameNumber;
-			addChild(Buttones.createRectBtn(10, 30, 100, text));
+			addChild(Buttones.createRectBtn(110 * gameNumber, 30, 100, text));
 		}
 	}
 }
