@@ -1,6 +1,8 @@
 package app.game.hitArea {
 	import app.game.entities.Entity;
 
+	import flash.geom.Point;
+
 	import loka.asUtils.collider.primitive.Circle;
 	import loka.asUtils.collider.primitive.Segment;
 
@@ -11,6 +13,18 @@ package app.game.hitArea {
 
 		public function HitArea(entity:Entity) {
 			this.entity = entity;
+		}
+
+		public function addSegmentByPoints(mask:uint, p1:Point, p2:Point, ...points):void {
+			addSegment(new HitSegment(p1, p2, mask));
+			var prevPoints:Point = p2;
+			for each (var point:* in points){
+				if(point is Point){
+					var nextPoint:Point = Point(point);
+					addSegment(new HitSegment(prevPoints, nextPoint, mask));
+					prevPoints = nextPoint;
+				}
+			}
 		}
 
 		public function addSegment(segment:HitSegment):void {

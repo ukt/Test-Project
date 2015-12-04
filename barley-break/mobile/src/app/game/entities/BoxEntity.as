@@ -83,12 +83,12 @@ package app.game.entities {
 			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
 			setXPosition(_speedX);
 			if(world.isCollided(hitArea)){
-				_speedX*=-.5;
+				_speedX*=-.25;
 				moveToPrevXPosition();
 			}
 			setYPosition(_speedY);
 			if(world.isCollided(hitArea)){
-				_speedY*=-.5;
+				_speedY*=-.25;
 				moveToPrevYPosition();
 			}
 			_ani.x = hitArea.segments[0].point1.x;
