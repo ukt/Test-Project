@@ -3,6 +3,7 @@ package app {
 
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.events.Event;
 	import flash.geom.Rectangle;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
@@ -23,8 +24,13 @@ package app {
 			tf.autoSize = TextFieldAutoSize.LEFT;
 			tf.border = true;
 			main.addChild(tf);
+			main.addEventListener(Event.ENTER_FRAME, updateUI);
 			world.initialize(main);
 			new GameArea(world);
+		}
+
+		private function updateUI(event:Event):void {
+			tf.parent.addChild(tf);
 		}
 
 		private function initializeAppGUI(main:Sprite):void {
