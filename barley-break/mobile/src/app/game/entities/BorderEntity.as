@@ -29,13 +29,6 @@ package app.game.entities {
 		}
 
 		public function initialize():void {
-		}
-
-		private static function onClick(event:MouseEvent):void {
-			App.world.updateAccelerometerData();
-		}
-
-		public function update():void {
 			var graphics:Graphics = _ani.graphics;
 			graphics.clear();
 			for each(var segment:Segment in hitArea.segments) {
@@ -45,6 +38,14 @@ package app.game.entities {
 				graphics.endFill();
 			}
 			graphics.endFill();
+		}
+
+		private static function onClick(event:MouseEvent):void {
+			App.world.updateAccelerometerData();
+		}
+
+		public function update():void {
+
 		}
 
 		public function get ani():MovieClip {
