@@ -14,9 +14,9 @@ package app.game {
 				var y:uint = 1;
 				for (y; y <= count; y++) {
 					world.addEntity(new BoxEntity(x + "_" + y, x, y, 100, 100));
-				}/*
-				for (y; y <= count*2; y++) {
-					world.addEntity(new BoxEntity(x + "_" + y, x*y, y, 60, 60));
+				}
+				/*for (y; y <= count*2; y++) {
+					world.addEntity(new BoxEntity(x + "_" + y,x+count*2, y-2, 50, 50));
 				}*/
 			}
 //			world.addEntity(new StaticBoxEntity("Box", 4, 10, 60, 60));

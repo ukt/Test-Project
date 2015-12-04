@@ -1,5 +1,5 @@
 package app.game.hitArea {
-	import app.game.entities.Entity;
+	import app.game.entities.actions.Entity;
 
 	import flash.geom.Point;
 

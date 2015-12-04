@@ -1,5 +1,8 @@
 package app.game.entities {
 	import app.App;
+	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.HittableEntity;
+	import app.game.entities.actions.SpeedAdder;
 	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;
@@ -9,7 +12,7 @@ package app.game.entities {
 
 	import loka.asUtils.collider.primitive.Segment;
 
-	public class BorderEntity implements Entity, HittableEntity {
+	public class BorderEntity implements Entity, HittableEntity, SpeedAdder {
 		private var _ani:MovieClip = new MovieClip();
 		private var _hitArea:HitArea;
 
@@ -57,6 +60,12 @@ package app.game.entities {
 
 		public function get hitArea():HitArea {
 			return _hitArea;
+		}
+
+		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
+			if(target is SpeedAdder){
+				SpeedAdder(target).addSpeed(this, xSpeed, ySpeed);
+			}
 		}
 	}
 }

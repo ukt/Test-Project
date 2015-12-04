@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.World;
+	import app.game.entities.actions.Entity;
 	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;

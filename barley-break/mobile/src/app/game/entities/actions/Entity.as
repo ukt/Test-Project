@@ -1,4 +1,4 @@
-package app.game.entities {
+package app.game.entities.actions {
 	import flash.display.MovieClip;
 
 	public interface Entity extends Disposer{

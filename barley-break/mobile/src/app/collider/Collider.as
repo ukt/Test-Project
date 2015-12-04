@@ -1,7 +1,7 @@
 package app.collider {
 	import app.App;
-	import app.game.entities.Entity;
-	import app.game.entities.HittableEntity;
+	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
 
 	import loka.asUtils.collider.Collide;

@@ -1,4 +1,4 @@
-package app.game.entities {
+package app.game.entities.actions {
 	import app.game.hitArea.HitArea;
 
 	public interface HittableEntity {

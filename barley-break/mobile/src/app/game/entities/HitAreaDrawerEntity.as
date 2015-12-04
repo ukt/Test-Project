@@ -1,9 +1,13 @@
 package app.game.entities {
 	import app.App;
+	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
+
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.utils.getTimer;
+
 	import loka.asUtils.collider.primitive.Segment;
 
 	public class HitAreaDrawerEntity implements Entity {

@@ -1,8 +1,8 @@
 package app {
 	import app.accelerometer.AccelerometerVO;
 	import app.collider.Collider;
-	import app.game.entities.Actioner;
-	import app.game.entities.Entity;
+	import app.game.entities.actions.Actioner;
+	import app.game.entities.actions.Entity;
 	import app.game.hitArea.HitArea;
 
 	import flash.display.Sprite;
