@@ -2,16 +2,13 @@ package app {
 	import app.accelerometer.AccelerometerVO;
 	import app.collider.Collider;
 	import app.game.entities.Actioner;
-	import app.game.entities.Actioner;
 	import app.game.entities.Entity;
-	import app.game.entities.Entity;
+	import app.game.hitArea.HitArea;
 
 	import flash.display.Sprite;
 	import flash.events.AccelerometerEvent;
 	import flash.events.Event;
 	import flash.sensors.Accelerometer;
-
-	import loka.asUtils.collider.Collide;
 
 	public class World {
 		private var main:Sprite;
@@ -48,30 +45,20 @@ package app {
 
 		}
 
-		public function collide(entityToCollide:Entity):Entity {
-			for each(var entity:Entity in entities) {
-				if (entity.collide(entityToCollide)) {
-					return entity;
-				}
-			}
-			return null;
+		public function collide(entityToCollide:HitArea):Vector.<Entity> {
+			return collider.getCollidedEntities(entityToCollide);
 		}
-		public function isCollided(entityToCollide:Entity):Boolean {
-			return collide(entityToCollide);
+
+		public function isCollided(entityToCollide:HitArea):Boolean {
+			return collide(entityToCollide).length > 0;
 		}
 
 		private function onEnterFrame(event:Event):void {
 			for each(var entity:Entity in entities) {
 				entity.update();
-
-				/*for each(var entity2:Entity in entities) {
-					if(entity2.collide(entity)){
-
-					}
-				}*/
 			}
 			for each(var action:Entity in entities) {
-				if(action is Actioner){
+				if (action is Actioner) {
 					Actioner(action).action();
 				}
 			}
@@ -85,7 +72,7 @@ package app {
 		public function getForEach(entityClass:Class):Array {
 			var result:Array = [];
 			for each(var entity:Entity in entities) {
-				if(entity is entityClass){
+				if (entity is entityClass) {
 					result.push(entity);
 				}
 			}
@@ -94,7 +81,7 @@ package app {
 
 		public function forEach(entityClass:Class, func:Function):void {
 			for each(var entity:Entity in entities) {
-				if(entity is entityClass){
+				if (entity is entityClass) {
 					func.call(null, entity);
 				}
 			}
@@ -107,9 +94,9 @@ package app {
 		}
 
 		public function removeEntity(entity:Entity):void {
-			functions.push(function():void{
+			functions.push(function ():void {
 				var indexOf:Number = entities.indexOf(entity);
-				if(indexOf>0){
+				if (indexOf > 0) {
 					entities.splice(indexOf, 1);
 					entity.dispose();
 				}

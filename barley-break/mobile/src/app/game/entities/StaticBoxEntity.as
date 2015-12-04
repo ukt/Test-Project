@@ -1,12 +1,12 @@
 package app.game.entities {
 	import app.App;
 	import app.game.hitArea.HitArea;
-import app.game.hitArea.HitSegment;
+	import app.game.hitArea.HitSegment;
 
-import flash.display.Graphics;
+	import flash.display.Graphics;
 	import flash.display.MovieClip;
-import flash.geom.Point;
-import flash.text.TextField;
+	import flash.geom.Point;
+	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
 	public class StaticBoxEntity implements Entity {
@@ -78,32 +78,6 @@ import flash.text.TextField;
 		}
 
 		public function update():void {
-		}
-
-		public function collide(entity:Entity):Boolean {
-			var ani2:MovieClip = entity.ani;
-			if (entity === this) {
-				return false;
-			}
-			var isAniInCubeByXAsLeft:Boolean = ani.x <= ani2.x && ani.x + ani.width >= ani2.x;
-			var isAniInCubeByXAsRight:Boolean = ani.x >= ani2.x && ani.x <= ani2.x + ani2.width;
-			var isAniInCubeByYAsTop:Boolean = ani.y >= ani2.y && ani.y <= ani2.y + ani2.height;
-			var isAniInCubeByYAsBottom:Boolean = ani.y <= ani2.y && ani.y + ani.height >= ani2.y;
-
-			var isCollided:Boolean = false;
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			return isCollided;
 		}
 
 		public function get ani():MovieClip {

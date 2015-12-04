@@ -1,20 +1,12 @@
 package app.game.entities {
 	import app.App;
 	import app.game.hitArea.HitArea;
-import app.game.hitArea.HitSegment;
-
-import flash.display.DisplayObjectContainer;
-
-import flash.display.Graphics;
+	import flash.display.Graphics;
 	import flash.display.MovieClip;
-import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.text.TextField;
-	import flash.text.TextFieldAutoSize;
+	import flash.utils.getTimer;
+	import loka.asUtils.collider.primitive.Segment;
 
-import loka.asUtils.collider.primitive.Segment;
-
-public class HitAreaDrawerEntity implements Entity {
+	public class HitAreaDrawerEntity implements Entity {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var _hitArea:HitArea;
@@ -27,6 +19,7 @@ public class HitAreaDrawerEntity implements Entity {
 
 		public function initialize():void {
 			_ani = new MovieClip();
+			_ani.mouseEnabled = false;
 			_ani.x = 0;
 			_ani.y = 0;
 			var graphics:Graphics = _ani.graphics;
@@ -38,8 +31,11 @@ public class HitAreaDrawerEntity implements Entity {
 
 			_hitArea = new HitArea(this);
 		}
-
+		private var _time:uint = 0;
 		public function update():void {
+			if(getTimer() - _time<50){
+				return;
+			}
 			var graphics:Graphics = _ani.graphics;
 			graphics.clear();
 			graphics.lineStyle(4, 0x000, 1, true);
@@ -48,19 +44,15 @@ public class HitAreaDrawerEntity implements Entity {
 			graphics.endFill();
 
 
-			App.world.forEach(HitableEntity, function(entity:HitableEntity):void{
+			App.world.forEach(HittableEntity, function(entity:HittableEntity):void{
 				for each(var segment:Segment in entity.hitArea.segments) {
-					graphics.lineStyle(4, 0xff0000, 1, true);
+					graphics.lineStyle(1, 0xff0000, 1, true);
 					graphics.moveTo(segment.point1.x, segment.point1.y);
 					graphics.lineTo(segment.point2.x, segment.point2.y);
 					graphics.endFill();
 				}
 			});
-
-		}
-
-		public function collide(entity:Entity):Boolean {
-			return false;
+			_time = getTimer();
 		}
 
 		public function get ani():MovieClip {

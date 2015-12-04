@@ -50,7 +50,7 @@ package app.game.entities {
 			var boxEntity:BoxEntity = new BoxEntity("" + count++, 1, 1, size, size);
 			var world:World = App.world;
 			world.addEntity(boxEntity);
-			while(world.isCollided(boxEntity)){
+			while(world.isCollided(boxEntity.hitArea)){
 				var deviceSize:Rectangle = App.deviceSize;
 				boxEntity.ani.x = Math.random() *deviceSize.width - boxEntity.ani.width;
 				boxEntity.ani.y = Math.random() *deviceSize.height - boxEntity.ani.height;
@@ -58,32 +58,6 @@ package app.game.entities {
 		}
 
 		public function update():void {
-		}
-
-		public function collide(entity:Entity):Boolean {
-			var ani2:MovieClip = entity.ani;
-			if (entity === this) {
-				return false;
-			}
-			var isAniInCubeByXAsLeft:Boolean = ani.x <= ani2.x && ani.x + ani.width >= ani2.x;
-			var isAniInCubeByXAsRight:Boolean = ani.x >= ani2.x && ani.x <= ani2.x + ani2.width;
-			var isAniInCubeByYAsTop:Boolean = ani.y >= ani2.y && ani.y <= ani2.y + ani2.height;
-			var isAniInCubeByYAsBottom:Boolean = ani.y <= ani2.y && ani.y + ani.height >= ani2.y;
-
-			var isCollided:Boolean = false;
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			return isCollided;
 		}
 
 		public function get ani():MovieClip {

@@ -1,23 +1,24 @@
 package app.game.entities {
-import app.App;
-import app.accelerometer.AccelerometerVO;
-import app.game.hitArea.HitArea;
-import app.game.hitArea.HitSegment;
+	import app.App;
+	import app.World;
+	import app.accelerometer.AccelerometerVO;
+	import app.game.hitArea.HitArea;
+	import app.game.hitArea.HitSegment;
 
-import flash.display.Graphics;
-import flash.display.MovieClip;
-import flash.events.MouseEvent;
-import flash.geom.Point;
-import flash.text.TextField;
-import flash.text.TextFieldAutoSize;
-import flash.utils.getTimer;
+	import flash.display.Graphics;
+	import flash.display.MovieClip;
+	import flash.events.MouseEvent;
+	import flash.geom.Point;
+	import flash.geom.Rectangle;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
+	import flash.utils.getTimer;
 
-public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity {
+	public class BoxEntity implements Entity, Actioner, SquareGetter, HittableEntity {
 		private var _ani:MovieClip = new MovieClip();
 		private var _speedX:Number = 0;
 		private var _speedY:Number = 0;
-		private var maxSpeed:Number;// = 20 + Math.random() * ;
-
+		private var maxSpeed:Number;
 
 		private var accelerometerVO:AccelerometerVO;
 		private var _square:Number = 0;
@@ -29,13 +30,14 @@ public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity 
 		public var color:uint;
 		private var _time:uint;
 		private var _hitArea:HitArea;
+
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
 			this.name = name;
-			width = width*App.appScale;
-			height = height*App.appScale;
+			width = width * App.appScale;
+			height = height * App.appScale;
 			maxSpeed = 60;
 			_square = Math.sqrt(width * height);
-			var gi:Number = 9.8 + Math.random()*5;
+			var gi:Number = 9.8 + Math.random() * 5;
 			acceleration = (gi * (1 / _square));
 			var textField:TextField = new TextField();
 			textField.text = name;
@@ -44,25 +46,12 @@ public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity 
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-//						_ani.addChild(textField);
+						_ani.addChild(textField);
 			_ani.x = x * width + x * 15;
 			_ani.y = y * height + y * 15;
 			trace(x, y);
 			var graphics:Graphics = _ani.graphics;
-			var colorArray:Array = [0xB03838,
-				0xB038A2,
-				0x7A38B0,
-				0x3848B0,
-				0x000,
-				0xfff,
-				0xcecece,
-				0x888888,
-				0x38AEB0,
-				0x99CC33,
-				0x38B06C,
-				0xB09038,
-				0xB03838
-			];
+			var colorArray:Array = [0xB03838, 0xB038A2, 0x7A38B0, 0x3848B0, 0x000, 0xfff, 0xcecece, 0x888888, 0x38AEB0, 0x99CC33, 0x38B06C, 0xB09038, 0xB03838];
 			var randomColorID:Number = Math.floor(Math.random() * colorArray.length);
 			color = colorArray[randomColorID];
 			graphics.lineStyle(2, 0xcecece, 1, true);
@@ -75,76 +64,32 @@ public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity 
 
 		public function initialize():void {
 			_hitArea = new HitArea(this);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y),
-							new Point(_ani.x, _ani.y + _ani.height)
-							, 2
-					)
-			);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y),
-							new Point(_ani.x + _ani.width, _ani.y)
-							, 2
-					)
-			);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x + _ani.width, _ani.y),
-							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
-							, 2
-					)
-			);
-			_hitArea.addSegment(
-					new HitSegment(
-							new Point(_ani.x, _ani.y + _ani.height),
-							new Point(_ani.x + _ani.width, _ani.y + _ani.height)
-							, 2
-					)
-			);
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x, _ani.y + _ani.height), 2));
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x + _ani.width, _ani.y), 2));
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x + _ani.width, _ani.y), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
+			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y + _ani.height), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
 		}
 
-		private function onClick(event:MouseEvent):void {
+		private static function onClick(event:MouseEvent):void {
 			App.world.updateAccelerometerData();
 		}
 
 		public function update():void {
-			this.accelerometerVO = App.world.accelerometerVO;
+			var world:World = App.world;
+			this.accelerometerVO = world.accelerometerVO;
 			_speedX += calculateAccelerationByX();
 			_speedY += calculateAccelerationByY();
 			_speedX = Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
 			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
-			var maxWhileX:int = 5;
-			var maxWhileY:int = 5;
-			if (Math.abs(_speedX) > 1) {
-				do {
-					if (App.world.isCollided(this)) {
-						_speedX *= .150;
-						moveToPrevXPosition();
-					}
-					if(!setXPosition(_speedX)){
-						_speedX *= .150;
-					}
-				} while (App.world.isCollided(this) && maxWhileX-- > 0);
-				if (App.world.isCollided(this)) {
-					moveToPrevXPosition();
-				}
+			setXPosition(_speedX);
+			if(world.isCollided(hitArea)){
+				_speedX*=-.5;
+				moveToPrevXPosition();
 			}
-			if (Math.abs(_speedY) > 1) {
-				do {
-					if (App.world.isCollided(this)) {
-						_speedY *= .150;
-						moveToPrevYPosition();
-					}
-
-					if(!setYPosition(_speedY)){
-						_speedY *= .150;
-					}
-				} while (App.world.isCollided(this) && maxWhileY-- > 0);
-				if (App.world.isCollided(this)) {
-					moveToPrevYPosition();
-				}
+			setYPosition(_speedY);
+			if(world.isCollided(hitArea)){
+				_speedY*=-.5;
+				moveToPrevYPosition();
 			}
 			_ani.x = hitArea.segments[0].point1.x;
 			_ani.y = hitArea.segments[0].point1.y;
@@ -159,111 +104,74 @@ public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity 
 		}
 
 		public function action():void {
-			var entity:BoxEntity;
 			var timer:int = getTimer();
-//			if(Math.abs(_speedX)>calculateAccelerationByX() || Math.abs(_speedY)>calculateAccelerationByY()){
-			if(Math.abs(_speedX)>3 || Math.abs(_speedY)>3){
+			if (Math.abs(_speedX) > 3 || Math.abs(_speedY) > 3) {
 				_time = timer;
 				return;
-			} else if(timer - _time<2000){
+			} else if (timer - _time < 2000) {
 				return;
 			}
+
 			var collideMove:int = 5;
 			setXPosition(collideMove);
-			entity = App.world.collide(this) as BoxEntity;
+			removeCollidedEntities();
 			moveToPrevXPosition();
-			if (entity && entity.color == color) {
-				App.world.removeEntity(entity);
-				App.world.removeEntity(this);
-			}
-
-			setXPosition(- collideMove);
-			entity = App.world.collide(this) as BoxEntity;
+			setXPosition(-collideMove);
+			removeCollidedEntities();
 			moveToPrevXPosition();
-			if (entity && entity.color == color) {
-				App.world.removeEntity(entity);
-				App.world.removeEntity(this);
-			}
-
 			setYPosition(collideMove);
-			entity = App.world.collide(this) as BoxEntity;
+			removeCollidedEntities();
 			moveToPrevYPosition();
-			if (entity && entity.color == color) {
-				App.world.removeEntity(entity);
-				App.world.removeEntity(this);
-			}
-
-			setYPosition(- collideMove);
-			entity = App.world.collide(this) as BoxEntity;
+			setYPosition(-collideMove);
+			removeCollidedEntities();
 			moveToPrevYPosition();
-			if (entity && entity.color == color) {
-				App.world.removeEntity(entity);
-				App.world.removeEntity(this);
-			}
 		}
 
-		public function collide(entity:Entity):Boolean {
-			var ani2:MovieClip = entity.ani;
-			if (entity === this) {
-				return false;
+		private function removeCollidedEntities():Vector.<Entity> {
+			var world:World = App.world;
+			var collidedEntities:Vector.<Entity> = world.collide(hitArea);
+			for each(var collidedEntity:Entity in collidedEntities) {
+				if (collidedEntity as BoxEntity && BoxEntity(collidedEntity).color == color) {
+					world.removeEntity(collidedEntity);
+					world.removeEntity(this);
+				}
 			}
-			var isAniInCubeByXAsLeft:Boolean = ani.x <= ani2.x && ani.x + ani.width >= ani2.x;
-			var isAniInCubeByXAsRight:Boolean = ani.x >= ani2.x && ani.x <= ani2.x + ani2.width;
-			var isAniInCubeByYAsTop:Boolean = ani.y >= ani2.y && ani.y <= ani2.y + ani2.height;
-			var isAniInCubeByYAsBottom:Boolean = ani.y <= ani2.y && ani.y + ani.height >= ani2.y;
-
-			var isCollided:Boolean = false;
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsLeft && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsTop) {
-				isCollided = true;
-			}
-			if (isAniInCubeByXAsRight && isAniInCubeByYAsBottom) {
-				isCollided = true;
-			}
-			return isCollided;
+			return collidedEntities;
 		}
 
-		private var _prevX:Number = 0;
-		private var _prevY:Number = 0;
-
-		private function moveToPrevXPosition():void {
-			ani.x = _prevX;
+		private function moveToPrevXPosition():Boolean {
+			hitArea.moveToPrevXPosition();
+			return true;
 		}
 
-		private function moveToPrevYPosition():void {
-			ani.y = _prevY;
+		private function moveToPrevYPosition():Boolean {
+			hitArea.moveToPrevYPosition();
+			return true;
 		}
 
 		private function setXPosition(xOffset:Number):Boolean {
-			_prevX = ani.x;
 			var possibleNewX:Number = hitArea.segments[0].point1.x + xOffset;
-			if (possibleNewX > 0 && possibleNewX + ani.width < App.deviceSize.width) {
-				hitArea.moveXPosition(xOffset);
-				return true;
-			} else if (possibleNewX < 0) {
-//				ani.x = 1;
-			} else if (possibleNewX + ani.width > App.deviceSize.width) {
-//				ani.x = App.deviceSize.width - (ani.width + 1);
+			var deviceSize:Rectangle = App.deviceSize;
+			if (possibleNewX < 0) {
+				xOffset = xOffset - possibleNewX;
+			} else if (possibleNewX + ani.width > deviceSize.width) {
+				var possibleNewXPlusW:Number = possibleNewX + ani.width;
+				xOffset = xOffset + deviceSize.width - possibleNewXPlusW;
 			}
+			hitArea.moveXPosition(xOffset);
 			return false;
 		}
 
 		private function setYPosition(yOffset:Number):Boolean {
-			_prevY = ani.y;
-			var possibleNewY:Number = hitArea.segments[0].point1.x + yOffset;
-			if (possibleNewY > 0 && possibleNewY + ani.height < App.deviceSize.height) {
-				hitArea.moveYPosition(yOffset);
-				return true;
-			} else if (possibleNewY < 0) {
-//				ani.y = 1;
-			} else if (possibleNewY + ani.width > App.deviceSize.height) {
-//				ani.y = App.deviceSize.height - (ani.height + 1);
+			var possibleNewY:Number = hitArea.segments[0].point1.y + yOffset;
+			var deviceSize:Rectangle = App.deviceSize;
+			if (possibleNewY < 0) {
+				yOffset = yOffset - possibleNewY;
+			} else if (possibleNewY + ani.height > deviceSize.height) {
+				var possibleNewYPlusH:Number = possibleNewY + ani.height;
+				yOffset = yOffset + deviceSize.height - possibleNewYPlusH;
 			}
+			hitArea.moveYPosition(yOffset);
 			return false;
 		}
 
@@ -272,7 +180,7 @@ public class BoxEntity implements Entity, Actioner, SquareGetter, HitableEntity 
 		}
 
 		public function dispose():void {
-			if(_ani.parent){
+			if (_ani.parent) {
 				_ani.removeEventListener(MouseEvent.CLICK, onClick);
 				_ani.parent.removeChild(_ani);
 			}
