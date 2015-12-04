@@ -4,6 +4,7 @@ package {
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.system.Capabilities;
 
 	import loka.asUtils.FPSGraphic;
 
@@ -14,9 +15,11 @@ package {
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 //			stage.scaleMode = StageScaleMode.EXACT_FIT;
 			stage.frameRate = 60;
-			var fpsGraphic:FPSGraphic = new FPSGraphic();
-			addChild(fpsGraphic);
-			fpsGraphic.scaleX = fpsGraphic.scaleY = App.appScale;
+			if(Capabilities.isDebugger) {
+				var fpsGraphic:FPSGraphic = new FPSGraphic();
+				fpsGraphic.scaleX = fpsGraphic.scaleY = App.appScale;
+				addChild(fpsGraphic);
+			}
 		}
 	}
 }
