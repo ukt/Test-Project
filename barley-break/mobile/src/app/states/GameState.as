@@ -3,6 +3,7 @@ package app.states {
 	import app.game.games.FirstGame;
 	import app.game.games.Game;
 	import app.game.games.SecondGame;
+	import app.game.games.ThirdGame;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -35,6 +36,9 @@ package app.states {
 					break;
 				case 2:
 					game = new SecondGame(App.world, DOC);
+					break;
+				case 3:
+					game = new ThirdGame(App.world, DOC);
 					break;
 				default :
 					game = new FirstGame(App.world, DOC);
