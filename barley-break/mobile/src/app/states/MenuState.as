@@ -23,10 +23,6 @@ package app.states {
 
 		private static function openGame(event:MouseEvent):void {
 			StateMachine.gotoState(GameState.NAME, GameBtn(event.currentTarget).gameNumber);
-			/*switch (GameBtn(event.currentTarget).gameNumber){
-				case 1:
-					new GameArea(App.world);
-			}*/
 		}
 	}
 }

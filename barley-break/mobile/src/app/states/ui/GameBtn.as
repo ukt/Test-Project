@@ -1,6 +1,5 @@
 package app.states.ui {
 	import flash.display.MovieClip;
-	import flash.events.MouseEvent;
 
 	import loka.button.Buttones;
 
@@ -10,14 +9,6 @@ package app.states.ui {
 			super();
 			this.gameNumber = gameNumber;
 			addChild(Buttones.createRectBtn(10, 30, 100, text));
-			addEventListener(MouseEvent.CLICK, openGame);
-		}
-
-		private function openGame(event:MouseEvent):void {
-			/*switch (gameNumber){
-				case 1:
-					new GameArea(App.world);
-			}*/
 		}
 	}
 }

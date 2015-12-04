@@ -1,4 +1,4 @@
-package app.game {
+package app.game.games {
 	import app.App;
 	import app.World;
 	import app.game.entities.BorderEntity;
@@ -9,10 +9,10 @@ package app.game {
 	import flash.display.DisplayObjectContainer;
 	import flash.system.Capabilities;
 
-	public class GameArea implements Game {
+	public class FirstGame implements Game {
 		private var world:World;
 		private var DOC:DisplayObjectContainer;
-		public function GameArea(world:World, DOC:DisplayObjectContainer) {
+		public function FirstGame(world:World, DOC:DisplayObjectContainer) {
 			this.world = world;
 			this.DOC = DOC;
 

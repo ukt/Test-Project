@@ -29,9 +29,6 @@ package app {
 			tf.border = true;
 			main.addChild(tf);
 			main.addEventListener(Event.ENTER_FRAME, updateUI);
-			world.initialize(main);
-
-//			new GameArea(world);
 		}
 
 		private static function initializeUIStates(main:Sprite):void {

@@ -1,7 +1,7 @@
 package app.states {
 	import app.App;
-	import app.game.Game;
-	import app.game.GameArea;
+	import app.game.games.FirstGame;
+	import app.game.games.Game;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -30,7 +30,7 @@ package app.states {
 			super.activate(gameNumber);
 			switch (gameNumber) {
 				case 1:
-					game = new GameArea(App.world, DOC);
+					game = new FirstGame(App.world, DOC);
 			}
 			game.start();
 		}
