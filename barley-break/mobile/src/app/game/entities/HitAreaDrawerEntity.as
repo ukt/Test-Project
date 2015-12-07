@@ -3,12 +3,11 @@ package app.game.entities {
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
+	import app.game.hitArea.HitSegment;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
 	import flash.utils.getTimer;
-
-	import loka.asUtils.collider.primitive.Segment;
 
 	public class HitAreaDrawerEntity implements Entity {
 		private var _ani:MovieClip = new MovieClip();
@@ -52,15 +51,26 @@ package app.game.entities {
 
 
 			App.world.forEach(HittableEntity, function(entity:HittableEntity):void{
-				for each(var segment:Segment in entity.hitArea.segments) {
+				for each(var segment:HitSegment in entity.hitArea.segments) {
 					graphics.lineStyle(1, 0xff0000, 1, true);
 					graphics.moveTo(segment.point1.x, segment.point1.y);
 					graphics.lineTo(segment.point2.x, segment.point2.y);
+
+					graphics.lineStyle(1, 0xff0000, .5, true);
+					graphics.moveTo(segment.prevP1.x, segment.prevP1.y);
+					graphics.lineTo(segment.point1.x, segment.point1.y);
+					graphics.moveTo(segment.prevP2.x, segment.prevP2.y);
+					graphics.lineTo(segment.point2.x, segment.point2.y);
+
 					graphics.endFill();
 				}
 			});
 			_time = getTimer();
-			_ani.parent.addChild(_ani);
+			if(_ani.parent) {
+				_ani.parent.addChild(_ani);
+			} else {
+				App.main.addChild(_ani);
+			}
 		}
 
 		public function get ani():MovieClip {

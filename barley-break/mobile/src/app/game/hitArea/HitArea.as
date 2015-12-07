@@ -8,8 +8,8 @@ package app.game.hitArea {
 
 	public class HitArea {
 		public var entity:Entity;
-		public var segments:Vector.<HitSegment> = new <HitSegment>[];
-		public var circles:Vector.<HitCircle> = new <HitCircle>[];
+		private var _segments:Vector.<HitSegment> = new <HitSegment>[];
+		public var _circles:Vector.<HitCircle> = new <HitCircle>[];
 
 		public function HitArea(entity:Entity) {
 			this.entity = entity;
@@ -28,11 +28,11 @@ package app.game.hitArea {
 		}
 
 		public function addSegment(segment:HitSegment):void {
-			segments.push(segment);
+			_segments.push(segment);
 		}
 
 		public function addCircle(circle:HitCircle):void {
-			circles.push(circle);
+			_circles.push(circle);
 		}
 
 
@@ -49,25 +49,30 @@ package app.game.hitArea {
 
 		public function moveXPosition(xOffset:Number):void {
 			_prevX = -xOffset;
-			for each(var segment:Segment in segments) {
-				segment.point1.x += xOffset;
-				segment.point2.x += xOffset;
+			for each(var segment:HitSegment in segments) {
+				segment.moveOnX(xOffset);
+				/*segment.point1.x += xOffset;
+				segment.point2.x += xOffset;*/
 			}
 
-			for each(var circle:Circle in circles) {
+			for each(var circle:Circle in _circles) {
 				circle.point.x += xOffset;
 			}
 		}
 
 		public function moveYPosition(yOffset:Number):void {
 			_prevY = -yOffset;
-			for each(var segment:Segment in segments) {
+			for each(var segment:Segment in _segments) {
 				segment.point1.y += yOffset;
 				segment.point2.y += yOffset;
 			}
-			for each(var circle:Circle in circles) {
+			for each(var circle:Circle in _circles) {
 				circle.point.y += yOffset;
 			}
+		}
+
+		public function get segments():Vector.<HitSegment> {
+			return _segments;
 		}
 	}
 }

@@ -1,8 +1,8 @@
 package app.game.entities {
 	import app.App;
 	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
-	import app.game.entities.actions.SpeedAdder;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
 
@@ -13,7 +13,7 @@ package app.game.entities {
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
 
-	public class StaticBoxEntity implements Entity, SpeedAdder, HittableEntity {
+	public class StaticBoxEntity implements Entity, EntityMover, HittableEntity {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
@@ -60,12 +60,6 @@ package app.game.entities {
 
 		}
 
-		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
-			if (target is SpeedAdder) {
-				SpeedAdder(target).addSpeed(this, xSpeed, ySpeed);
-			}
-		}
-
 		public function updateDT(dt:uint):void {
 
 		}
@@ -81,6 +75,20 @@ package app.game.entities {
 			if (_ani.parent) {
 				_ani.parent.removeChild(_ani);
 			}
+		}
+
+		public function addSpeed(target:EntityMover, xSpeed:int, ySpeed:int):void {
+			target.addSpeed(this, xSpeed, ySpeed);
+		}
+
+		public function get speedX():Number {
+			return 0;
+		}
+
+		public function get speedY():Number {
+			return 0;
+		}
+		public function moveBack():void {
 		}
 	}
 }

@@ -1,6 +1,7 @@
 package app {
 	import app.states.GameState;
 	import app.states.MenuState;
+	import app.world.World;
 
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -27,6 +28,7 @@ package app {
 			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.LEFT;
 			tf.border = true;
+			tf.mouseEnabled = false;
 			main.addChild(tf);
 			main.addEventListener(Event.ENTER_FRAME, updateUI);
 		}

@@ -1,14 +1,14 @@
 package app.game.entities {
 	import app.App;
-	import app.World;
 	import app.accelerometer.AccelerometerVO;
 	import app.game.entities.actions.Actioner;
 	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
-	import app.game.entities.actions.SpeedAdder;
 	import app.game.entities.actions.SquareGetter;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
+	import app.world.World;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -19,7 +19,7 @@ package app.game.entities {
 	import flash.text.TextFieldAutoSize;
 	import flash.utils.getTimer;
 
-	public class BoxEntity implements Entity, Actioner, SquareGetter, HittableEntity, SpeedAdder {
+	public class BoxEntity implements Entity, Actioner, SquareGetter, HittableEntity, EntityMover {
 		private var _ani:MovieClip = new MovieClip();
 		private var _speedX:Number = 0;
 		private var _speedY:Number = 0;
@@ -41,7 +41,7 @@ package app.game.entities {
 			this.name = name;
 			width = width * App.appScale;
 			height = height * App.appScale;
-			maxSpeed = 30;
+			maxSpeed = 10;
 			_square = Math.sqrt(width * height);
 			var gi:Number = 9.8 + Math.random() * 5;
 			acceleration = (gi * (1 / _square));
@@ -94,35 +94,35 @@ package app.game.entities {
 			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
 
 			var speedCompensation:Number = .25;
-			var entities:Vector.<Entity>;
-			if(Math.abs(_speedX*(1-accelerometerVO.accelerationX))>1) {
+//			var entities:Vector.<Entity>;
+//			if(Math.abs(_speedX*(1-accelerometerVO.accelerationX))>1) {
 				setXPosition(_speedX * (dt / 16));
-				entities = world.collide(hitArea);
+				/*entities = world.collide(hitArea);
 				if (entities.length > 0) {
 					var speedXCompensation:Number = speedCompensation * entities.length;
 					_speedX *= -speedXCompensation;
 					for each(var entity:Entity in entities) {
-						if (entity is SpeedAdder) {
-							SpeedAdder(entity).addSpeed(this, speedXCompensation, 0)
+						if (entity is EntityMover) {
+							EntityMover(entity).addSpeed(this, speedXCompensation, 0)
 						}
 					}
 					moveToPrevXPosition();
-				}
-			}
-			if(Math.abs(_speedY*(1-accelerometerVO.accelerationY))>1) {
+				}*/
+//			}
+//			if(Math.abs(_speedY*(1-accelerometerVO.accelerationY))>1) {
 				setYPosition(_speedY * (dt / 16));
-				entities = world.collide(hitArea);
+				/*entities = world.collide(hitArea);
 				if (entities.length > 0) {
 					var speedYCompensation:Number = speedCompensation * entities.length;
 					_speedY *= -speedYCompensation;
 					for each(var entity:Entity in entities) {
-						if (entity is SpeedAdder) {
-							SpeedAdder(entity).addSpeed(this, 0, speedYCompensation)
+						if (entity is EntityMover) {
+							EntityMover(entity).addSpeed(this, 0, speedYCompensation)
 						}
 					}
 					moveToPrevYPosition();
-				}
-			}
+				}*/
+//			}
 		}
 		public function update():void {
 			if (hitArea.segments.length == 0) {
@@ -232,9 +232,22 @@ package app.game.entities {
 			return _hitArea;
 		}
 
-		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
+		public function addSpeed(target:EntityMover, xSpeed:int, ySpeed:int):void {
 			_speedX += xSpeed;
 			_speedY += ySpeed;
+		}
+
+		public function get speedX():Number {
+			return _speedX;
+		}
+
+		public function get speedY():Number {
+			return _speedY;
+		}
+
+		public function moveBack():void {
+			moveToPrevXPosition();
+			moveToPrevYPosition();
 		}
 	}
 }

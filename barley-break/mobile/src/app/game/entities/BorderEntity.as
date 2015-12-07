@@ -1,8 +1,8 @@
 package app.game.entities {
 	import app.App;
 	import app.game.entities.actions.Entity;
+	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
-	import app.game.entities.actions.SpeedAdder;
 	import app.game.hitArea.HitArea;
 
 	import flash.display.Graphics;
@@ -12,19 +12,13 @@ package app.game.entities {
 
 	import loka.asUtils.collider.primitive.Segment;
 
-	public class BorderEntity implements Entity, HittableEntity, SpeedAdder {
+	public class BorderEntity implements Entity, HittableEntity, EntityMover {
 		private var _ani:MovieClip = new MovieClip();
 		private var _hitArea:HitArea;
 
 		public function BorderEntity(x:Number, y:Number, width:int = 800, height:int = 600) {
 			_hitArea = new HitArea(this);
-			_hitArea.addSegmentByPoints(2,
-					new Point(x, y),
-					new Point(x + width, y),
-					new Point(x + width, y + height),
-					new Point(x, y + height),
-					new Point(x, y)
-			);
+			_hitArea.addSegmentByPoints(2, new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height), new Point(x, y));
 			ani.cacheAsBitmap = true;
 		}
 
@@ -43,9 +37,11 @@ package app.game.entities {
 		private static function onClick(event:MouseEvent):void {
 			App.world.updateAccelerometerData();
 		}
+
 		public function updateDT(dt:uint):void {
 
 		}
+
 		public function update():void {
 
 		}
@@ -65,10 +61,19 @@ package app.game.entities {
 			return _hitArea;
 		}
 
-		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
-			if(target is SpeedAdder){
-				SpeedAdder(target).addSpeed(this, xSpeed, ySpeed);
-			}
+		public function addSpeed(target:EntityMover, xSpeed:int, ySpeed:int):void {
+			target.addSpeed(this, -xSpeed*.5, -ySpeed*.5);
+		}
+
+		public function get speedX():Number {
+			return 0;
+		}
+
+		public function get speedY():Number {
+			return 0;
+		}
+
+		public function moveBack():void {
 		}
 	}
 }

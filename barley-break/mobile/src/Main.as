@@ -23,7 +23,7 @@ package {
 				addChild(fpsGraphic);
 			}
 
-			stage.addEventListener(MouseEvent.CLICK, add)
+//			stage.addEventListener(MouseEvent.CLICK, add)
 		}
 
 

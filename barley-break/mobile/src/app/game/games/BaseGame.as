@@ -1,6 +1,7 @@
 package app.game.games {
-	import app.World;
 	import app.game.entities.HitAreaDrawerEntity;
+	import app.game.worldListener.CollideWorldListener;
+	import app.world.World;
 
 	import flash.display.DisplayObjectContainer;
 	import flash.system.Capabilities;
@@ -20,6 +21,7 @@ package app.game.games {
 			if (Capabilities.isDebugger) {
 				world.addEntity(new HitAreaDrawerEntity());
 			}
+			world.addWorldListener(new CollideWorldListener());
 		}
 
 		public function dispose():void {

@@ -1,10 +1,10 @@
 package app.game.entities {
 	import app.App;
-	import app.World;
 	import app.game.entities.actions.Actioner;
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.SquareGetter;
 	import app.game.hitArea.HitArea;
+	import app.world.World;
 
 	import flash.display.MovieClip;
 	import flash.geom.Rectangle;

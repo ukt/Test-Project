@@ -1,4 +1,5 @@
-package app {
+package app.world {
+	import app.*;
 	import app.accelerometer.AccelerometerVO;
 	import app.collider.Collider;
 	import app.game.entities.actions.Actioner;
@@ -8,8 +9,13 @@ package app {
 	import flash.display.DisplayObjectContainer;
 	import flash.events.AccelerometerEvent;
 	import flash.events.Event;
+	import flash.events.TimerEvent;
 	import flash.sensors.Accelerometer;
+	import flash.system.Capabilities;
+	import flash.utils.Timer;
+	import flash.utils.clearInterval;
 	import flash.utils.getTimer;
+	import flash.utils.setInterval;
 
 	public class World {
 		private var main:DisplayObjectContainer;
@@ -18,8 +24,14 @@ package app {
 		public var accelerometerVO:AccelerometerVO = new AccelerometerVO();
 		public var collider:Collider = new Collider();
 		private var accelerometer:Accelerometer = new Accelerometer();
+		private var worldListeners:Vector.<IWorldListener> = new <IWorldListener>[];
 
 		public function World() {
+		}
+
+		public function addWorldListener(worldListener:IWorldListener):void {
+			worldListeners.push(worldListener);
+			worldListener.initialize(this);
 		}
 
 		public function dispose():void {
@@ -32,29 +44,34 @@ package app {
 				accelerometer.removeEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 				this.main = null;
 			}
-
+			if(_timer){
+				_timer.stop();
+				_timer.removeEventListener(TimerEvent.TIMER, updateDt);
+			}
+			worldListeners = new <IWorldListener>[];
 		}
 
+
+		private var _intervalId:uint;
+
+		private var _timer:Timer;
 
 		public function initialize(main:DisplayObjectContainer):void {
 			dispose();
 			this.main = main;
 			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			_timer = new Timer(1000 / 30);
+			_timer.addEventListener(TimerEvent.TIMER, updateDt);
+			_timer.start();
+			_updateDt = getTimer();
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 			updateAccelerometerData();
-//			initializeEntities();
-			/*for each(var entity:Entity in entities) {
-			 main.addChild(entity.ani);
-			 entity.initialize();
-			 /!*if (entity is entityClass) {
-			 func.call(null, entity);
-			 }*!/
-			 }*/
+			clearInterval(_intervalId);
+			if (Capabilities.isDebugger) {
+				_intervalId = setInterval(updateAccelerometerData, 2000);
+			}
+			worldListeners = new <IWorldListener>[];
 		}
-
-		/*private function initializeEntities():void {
-
-		 }*/
 
 		public function updateAccelerometerData():void {
 			var accelerometerEvent:AccelerometerEvent = new AccelerometerEvent(AccelerometerEvent.UPDATE);
@@ -88,18 +105,30 @@ package app {
 			return collide(entityToCollide, 1).length > 0;
 		}
 
-		private var _timeToCollide:uint = 0;
+		private var _frameTime:uint = 0;
+		private var _updateDt:uint = getTimer();
 
+
+		private function updateDt(event:TimerEvent):void {
+			var time:int = getTimer();
+			var dt:int;
+			for each(var entity:Entity in entities) {
+				dt = getTimer() - _updateDt;
+				entity.updateDT(Math.min(100, dt));
+			}
+			trace("updateDt:\t", getTimer() - time, "  \t", dt);
+			_updateDt = getTimer();
+			for each (var worldListener:IWorldListener in worldListeners){
+				worldListener.updateDtComplete(dt);
+			}
+		}
 		private function onEnterFrame(event:Event = null):void {
-			var dt:int = getTimer() - _timeToCollide;
-//			if (dt > 30) {
-				for each(var entity:Entity in entities) {
-					entity.updateDT(dt);
-				}
-				_timeToCollide = getTimer();
-//			}
+			var dt:int = getTimer() - _frameTime;
 			for each(var entity:Entity in entities) {
 				entity.update();
+			}
+			for each (var worldListener:IWorldListener in worldListeners){
+				worldListener.updateComplete();
 			}
 			for each(var action:Entity in entities) {
 				if (action is Actioner) {
@@ -109,10 +138,12 @@ package app {
 			for each(var f:Function in functions) {
 				f.call();
 			}
-			trace("collideTime: ", _collideTime,_collideCount);
+//			trace("collideTime:	", _collideTime, "collideCount:	", _collideCount, "dt:	", dt);
 			_collideTime = 0;
-			_collideCount=0;
-
+			_collideCount = 0;
+			if (dt > 16) {
+				_frameTime = getTimer();
+			}
 
 		}
 
@@ -137,7 +168,10 @@ package app {
 		public function addEntity(entity:Entity):void {
 			entity.initialize();
 			entities.push(entity);
-			main.addChild(entity.ani);
+//			main.addChild(entity.ani);
+			for each (var worldListener:IWorldListener in worldListeners){
+				worldListener.entityAdded(entity);
+			}
 		}
 
 		public function removeEntity(entity:Entity):void {
@@ -146,6 +180,9 @@ package app {
 				if (indexOf > 0) {
 					entities.splice(indexOf, 1);
 					entity.dispose();
+					for each (var worldListener:IWorldListener in worldListeners){
+						worldListener.entityRemoved(entity);
+					}
 				}
 			});
 

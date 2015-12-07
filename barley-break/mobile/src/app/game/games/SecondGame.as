@@ -1,10 +1,10 @@
 package app.game.games {
 	import app.App;
-	import app.World;
 	import app.game.entities.AccelerometerShower;
 	import app.game.entities.BorderEntity;
 	import app.game.entities.BoxEntity;
 	import app.game.entities.StaticBoxEntity;
+	import app.world.World;
 
 	import flash.display.DisplayObjectContainer;
 
