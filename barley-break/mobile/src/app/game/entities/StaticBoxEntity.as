@@ -37,7 +37,7 @@ package app.game.entities {
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-			if(Capabilities.isDebugger) {
+			if (Capabilities.isDebugger) {
 				_ani.addChild(textField);
 			}
 			var graphics:Graphics = _ani.graphics;
@@ -61,9 +61,13 @@ package app.game.entities {
 		}
 
 		public function addSpeed(target:Entity, xSpeed:int, ySpeed:int):void {
-			if(target is SpeedAdder){
+			if (target is SpeedAdder) {
 				SpeedAdder(target).addSpeed(this, xSpeed, ySpeed);
 			}
+		}
+
+		public function updateDT(dt:uint):void {
+
 		}
 
 		public function update():void {

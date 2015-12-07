@@ -35,6 +35,9 @@ package app.game.entities {
 
 			_hitArea = new HitArea(this);
 		}
+		public function updateDT(dt:uint):void {
+
+		}
 		private var _time:uint = 0;
 		public function update():void {
 			if(getTimer() - _time<50){

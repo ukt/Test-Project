@@ -11,11 +11,14 @@ package app.collider {
 		public function Collider() {
 		}
 
-		public function getCollidedEntities(hitArea:HitArea):Vector.<Entity> {
+		public function getCollidedEntities(hitArea:HitArea, limit:uint = int.MAX_VALUE):Vector.<Entity> {
 			var result:Vector.<Entity> = new <Entity>[];
 
 			App.world.forEach(HittableEntity, function (hittableEntity:HittableEntity):void {
-				if(hittableEntity === hitArea.entity){
+				if (result.length >= limit) {
+					return;
+				}
+				if (hittableEntity === hitArea.entity) {
 					return;
 				}
 				for each(var segmentAtBody1:Segment in hitArea.segments) {

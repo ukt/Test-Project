@@ -9,6 +9,7 @@ package app {
 	import flash.events.AccelerometerEvent;
 	import flash.events.Event;
 	import flash.sensors.Accelerometer;
+	import flash.utils.getTimer;
 
 	public class World {
 		private var main:DisplayObjectContainer;
@@ -17,22 +18,22 @@ package app {
 		public var accelerometerVO:AccelerometerVO = new AccelerometerVO();
 		public var collider:Collider = new Collider();
 		private var accelerometer:Accelerometer = new Accelerometer();
+
 		public function World() {
 		}
 
 		public function dispose():void {
-			for each(var entity:Entity in entities){
+			for each(var entity:Entity in entities) {
 				removeEntity(entity);
 			}
 			onEnterFrame();
-			if(this.main){
+			if (this.main) {
 				main.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
 				accelerometer.removeEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 				this.main = null;
 			}
 
 		}
-
 
 
 		public function initialize(main:DisplayObjectContainer):void {
@@ -43,17 +44,17 @@ package app {
 			updateAccelerometerData();
 //			initializeEntities();
 			/*for each(var entity:Entity in entities) {
-				main.addChild(entity.ani);
-				entity.initialize();
-				/!*if (entity is entityClass) {
-				 func.call(null, entity);
-				 }*!/
-			}*/
+			 main.addChild(entity.ani);
+			 entity.initialize();
+			 /!*if (entity is entityClass) {
+			 func.call(null, entity);
+			 }*!/
+			 }*/
 		}
 
 		/*private function initializeEntities():void {
 
-		}*/
+		 }*/
 
 		public function updateAccelerometerData():void {
 			var accelerometerEvent:AccelerometerEvent = new AccelerometerEvent(AccelerometerEvent.UPDATE);
@@ -72,15 +73,31 @@ package app {
 
 		}
 
-		public function collide(entityToCollide:HitArea):Vector.<Entity> {
-			return collider.getCollidedEntities(entityToCollide);
+		private var _collideTime:uint = 0;
+		private var _collideCount:uint = 0;
+
+		public function collide(entityToCollide:HitArea, limit:int = int.MAX_VALUE):Vector.<Entity> {
+			var time:uint = getTimer();
+			var collidedEntities:Vector.<Entity> = collider.getCollidedEntities(entityToCollide, limit);
+			_collideTime += getTimer() - time;
+			_collideCount++;
+			return collidedEntities;
 		}
 
 		public function isCollided(entityToCollide:HitArea):Boolean {
-			return collide(entityToCollide).length > 0;
+			return collide(entityToCollide, 1).length > 0;
 		}
 
+		private var _timeToCollide:uint = 0;
+
 		private function onEnterFrame(event:Event = null):void {
+			var dt:int = getTimer() - _timeToCollide;
+//			if (dt > 30) {
+				for each(var entity:Entity in entities) {
+					entity.updateDT(dt);
+				}
+				_timeToCollide = getTimer();
+//			}
 			for each(var entity:Entity in entities) {
 				entity.update();
 			}
@@ -92,6 +109,10 @@ package app {
 			for each(var f:Function in functions) {
 				f.call();
 			}
+			trace("collideTime: ", _collideTime,_collideCount);
+			_collideTime = 0;
+			_collideCount=0;
+
 
 		}
 

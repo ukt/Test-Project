@@ -41,7 +41,7 @@ package app.game.entities {
 			this.name = name;
 			width = width * App.appScale;
 			height = height * App.appScale;
-			maxSpeed = 60;
+			maxSpeed = 30;
 			_square = Math.sqrt(width * height);
 			var gi:Number = 9.8 + Math.random() * 5;
 			acceleration = (gi * (1 / _square));
@@ -52,8 +52,8 @@ package app.game.entities {
 			textField.selectable = false;
 			textField.cacheAsBitmap = true;
 			textField.autoSize = TextFieldAutoSize.CENTER;
-			if(Capabilities.isDebugger) {
-				_ani.addChild(textField);
+			if (Capabilities.isDebugger) {
+//				_ani.addChild(textField);
 			}
 			_ani.x = x * width + x * 5 - width + 15;
 			_ani.y = y * height + y * 5 - height + 45;
@@ -82,8 +82,8 @@ package app.game.entities {
 			App.world.updateAccelerometerData();
 		}
 
-		public function update():void {
-			if(hitArea.segments.length==0){
+		public function updateDT(dt:uint):void {
+			if (hitArea.segments.length == 0) {
 				return
 			}
 			var world:World = App.world;
@@ -92,30 +92,41 @@ package app.game.entities {
 			_speedY += calculateAccelerationByY();
 			_speedX = Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
 			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
-			var entities:Vector.<Entity>;
-			setXPosition(_speedX);
-			entities = world.collide(hitArea);
-			var speedCompensation:Number = .25;
-			if (entities.length > 0) {
-				_speedX *= -speedCompensation * entities.length;
-				for each(var entity:Entity in entities){
-					if(entity is SpeedAdder){
-						SpeedAdder(entity).addSpeed(this, speedCompensation, 0)
-					}
-				}
-				moveToPrevXPosition();
-			}
-			setYPosition(_speedY);
-			entities = world.collide(hitArea);
-			if (entities.length > 0) {
-				_speedY *= -speedCompensation * entities.length;
-				for each(var entity:Entity in entities){
-					if(entity is SpeedAdder){
-						SpeedAdder(entity).addSpeed(this, 0, speedCompensation)
-					}
-				}
 
-				moveToPrevYPosition();
+			var speedCompensation:Number = .25;
+			var entities:Vector.<Entity>;
+			if(Math.abs(_speedX*(1-accelerometerVO.accelerationX))>1) {
+				setXPosition(_speedX * (dt / 16));
+				entities = world.collide(hitArea);
+				if (entities.length > 0) {
+					var speedXCompensation:Number = speedCompensation * entities.length;
+					_speedX *= -speedXCompensation;
+					for each(var entity:Entity in entities) {
+						if (entity is SpeedAdder) {
+							SpeedAdder(entity).addSpeed(this, speedXCompensation, 0)
+						}
+					}
+					moveToPrevXPosition();
+				}
+			}
+			if(Math.abs(_speedY*(1-accelerometerVO.accelerationY))>1) {
+				setYPosition(_speedY * (dt / 16));
+				entities = world.collide(hitArea);
+				if (entities.length > 0) {
+					var speedYCompensation:Number = speedCompensation * entities.length;
+					_speedY *= -speedYCompensation;
+					for each(var entity:Entity in entities) {
+						if (entity is SpeedAdder) {
+							SpeedAdder(entity).addSpeed(this, 0, speedYCompensation)
+						}
+					}
+					moveToPrevYPosition();
+				}
+			}
+		}
+		public function update():void {
+			if (hitArea.segments.length == 0) {
+				return
 			}
 			_ani.x = hitArea.segments[0].point1.x;
 			_ani.y = hitArea.segments[0].point1.y;
@@ -131,6 +142,7 @@ package app.game.entities {
 
 		public function action():void {
 			var timer:int = getTimer();
+			return
 			if (Math.abs(_speedX) > 3 || Math.abs(_speedY) > 3) {
 				_time = timer;
 				return;
@@ -177,26 +189,26 @@ package app.game.entities {
 
 		private function setXPosition(xOffset:Number):Boolean {
 			/*var possibleNewX:Number = hitArea.segments[0].point1.x + xOffset;
-			var deviceSize:Rectangle = App.deviceSize;
-			if (possibleNewX < 0) {
-				xOffset = xOffset - possibleNewX;
-			} else if (possibleNewX + ani.width > deviceSize.width) {
-				var possibleNewXPlusW:Number = possibleNewX + ani.width;
-				xOffset = xOffset + deviceSize.width - possibleNewXPlusW;
-			}*/
+			 var deviceSize:Rectangle = App.deviceSize;
+			 if (possibleNewX < 0) {
+			 xOffset = xOffset - possibleNewX;
+			 } else if (possibleNewX + ani.width > deviceSize.width) {
+			 var possibleNewXPlusW:Number = possibleNewX + ani.width;
+			 xOffset = xOffset + deviceSize.width - possibleNewXPlusW;
+			 }*/
 			hitArea.moveXPosition(xOffset);
 			return false;
 		}
 
 		private function setYPosition(yOffset:Number):Boolean {
 			/*var possibleNewY:Number = hitArea.segments[0].point1.y + yOffset;
-			var deviceSize:Rectangle = App.deviceSize;
-			if (possibleNewY < 0) {
-				yOffset = yOffset - possibleNewY;
-			} else if (possibleNewY + ani.height > deviceSize.height) {
-				var possibleNewYPlusH:Number = possibleNewY + ani.height;
-				yOffset = yOffset + deviceSize.height - possibleNewYPlusH;
-			}*/
+			 var deviceSize:Rectangle = App.deviceSize;
+			 if (possibleNewY < 0) {
+			 yOffset = yOffset - possibleNewY;
+			 } else if (possibleNewY + ani.height > deviceSize.height) {
+			 var possibleNewYPlusH:Number = possibleNewY + ani.height;
+			 yOffset = yOffset + deviceSize.height - possibleNewYPlusH;
+			 }*/
 			hitArea.moveYPosition(yOffset);
 			return false;
 		}

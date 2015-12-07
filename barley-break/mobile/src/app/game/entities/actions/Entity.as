@@ -6,5 +6,6 @@ package app.game.entities.actions {
 		function initialize():void;
 		function get ani():MovieClip
 
+		function updateDT(dt:uint):void;
 	}
 }

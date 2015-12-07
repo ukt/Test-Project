@@ -43,7 +43,9 @@ package app.game.entities {
 		private static function onClick(event:MouseEvent):void {
 			App.world.updateAccelerometerData();
 		}
+		public function updateDT(dt:uint):void {
 
+		}
 		public function update():void {
 
 		}

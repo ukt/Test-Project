@@ -57,7 +57,9 @@ package app.game.entities {
 				boxEntity.ani.y = Math.random() *deviceSize.height - boxEntity.ani.height;
 			}
 		}
+		public function updateDT(dt:uint):void {
 
+		}
 		public function update():void {
 		}
 
