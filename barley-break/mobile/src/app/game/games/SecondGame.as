@@ -1,6 +1,7 @@
 package app.game.games {
 	import app.App;
 	import app.World;
+	import app.game.entities.AccelerometerShower;
 	import app.game.entities.BorderEntity;
 	import app.game.entities.BoxEntity;
 	import app.game.entities.StaticBoxEntity;
@@ -22,7 +23,11 @@ package app.game.games {
 				}
 			}
 			for (x = 2; x <= 15; x++) {
-				world.addEntity(new StaticBoxEntity("", x, 5, 50, 50));
+				if(x==7){
+					world.addEntity(new AccelerometerShower("", x, 5, 50, 50));
+				} else {
+					world.addEntity(new StaticBoxEntity("", x, 5, 50, 50));
+				}
 			}
 			//			world.addEntity(new StaticBoxEntity("Box", 5, 14, 140, 60));
 			//			world.addEntity(new StaticBoxEntity("Box", 6, 5, 60, 60));
