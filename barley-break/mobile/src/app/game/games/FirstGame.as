@@ -18,14 +18,12 @@ package app.game.games {
 
 
 //			world.addEntity(new BoxEntity(5 + "_" + 5, 5, 2, 100, 100));
-			world.addEntity(new PointEntity(100, 100));
-			world.addEntity(new PointEntity(200, 100));
-			world.addEntity(new PointEntity(100, 200));
-			world.addEntity(new PointEntity(200, 200));
+//			world.addEntity(new PointEntity(100, 100));
+//			world.addEntity(new PointEntity(200, 100));
+//			world.addEntity(new PointEntity(100, 200));
+//			world.addEntity(new PointEntity(200, 200));
 //			world.addEntity(new ColliderEntity());
-			App.main.stage.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void{
-				world.addEntity(new PointEntity(event.stageX, event.stageY + 20));
-			});
+			DOC.getChildByName("background").addEventListener(MouseEvent.CLICK, addNewEntity);
 //			world.addEntity(new BoxEntity(5 + "_" + 5, 7, 2, 100, 100));
 			/*var count:int = 4;
 			for (var x:uint = 1; x <= count; x++) {
@@ -40,6 +38,17 @@ package app.game.games {
 			//			world.addEntity(new BoxEntitySpawner("Spawn", 6, 5, 100, 60));
 			//			world.addEntity(new BoxEntityAutoSpawner("AutoSpawn"));
 			world.addEntity(new BorderEntity(10, 40, App.deviceSize.width - 20, App.deviceSize.height - 50));
+		}
+
+		private function addNewEntity(event:MouseEvent):void {
+			var pointEntity:PointEntity = new PointEntity(event.stageX, event.stageY + 20, Math.random() * 5 + 1);
+			pointEntity.useAcceleration = event.shiftKey;
+			world.addEntity(pointEntity);
+		}
+
+		override public function dispose():void {
+			DOC.getChildByName("background").removeEventListener(MouseEvent.CLICK, addNewEntity);
+			super.dispose();
 		}
 	}
 }

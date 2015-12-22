@@ -14,14 +14,16 @@ package app.game.entities {
 	public class PointEntity implements Entity, HittableEntity {
 		private var _hitArea:PhysicalHitArea;
 
-		public function PointEntity(x:int, y:int) {
+		public function PointEntity(x:int, y:int, weight:Number = 1) {
 			_hitArea = new PhysicalHitArea(this);
+			var width:int = weight * 5;
 			_hitArea.addSegmentByPoints(2,
 					new Point(x, y),
-					new Point(x + 10, y + 10),
-					new Point(x + 20, y + 0),
+					new Point(x + width, y + width),
+					new Point(x + width * 2, y + 0),
 					new Point(x, y)
-			)
+			);
+			_hitArea.weight = weight;
 		}
 
 		public function get hitArea():HitArea {
@@ -29,6 +31,7 @@ package app.game.entities {
 		}
 
 		private var _ani:MovieClip = new MovieClip();
+		private var _useAcceleration:Boolean = true;
 
 		public function get ani():MovieClip {
 			return _ani;
@@ -42,16 +45,24 @@ package app.game.entities {
 
 		public function initialize():void {
 		}
+		public function set useAcceleration(value:Boolean){
+			_useAcceleration = value;
 
+		}
 		public function updateDT(dt:uint):void {
 			var world:World = App.world;
 			var accelerometerVO:AccelerometerVO = world.accelerometerVO;
 			_hitArea.update(dt);
-			_hitArea.speedX -=Acceleration.G * accelerometerVO.accelerationX;
-			_hitArea.speedY +=Acceleration.G * accelerometerVO.accelerationY;
+			if(_useAcceleration) {
+				_hitArea.speedX -= Acceleration.G * accelerometerVO.accelerationX;
+				_hitArea.speedY += Acceleration.G * accelerometerVO.accelerationY;
+			}
 		}
 
 		public function dispose():void {
+			if(_ani.parent){
+				_ani.parent.removeChild(_ani);
+			}
 		}
 	}
 }

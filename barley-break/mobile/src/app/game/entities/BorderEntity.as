@@ -35,7 +35,7 @@ package app.game.entities {
 		}
 
 		public function updateDT(dt:uint):void {
-
+//			_hitArea.update(dt);
 		}
 
 		public function update():void {

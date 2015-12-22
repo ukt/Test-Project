@@ -6,6 +6,9 @@ package app.states {
 	import app.game.games.ThirdGame;
 	import app.world.World;
 
+	import cdn.Assets;
+
+	import flash.display.Bitmap;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
@@ -30,6 +33,16 @@ package app.states {
 		private var _world:World;
 
 		override public function init():void {
+			var background:Bitmap = new Assets.background();
+			var backgroundMc:Sprite = new Sprite();
+			backgroundMc.addChild(background);
+			DOC.addChild(backgroundMc);
+			backgroundMc.name = "background";
+			background.x = 10;
+			background.y = 40;
+			background.height = 430;
+			background.width = 780;
+			background.alpha = .2;
 			btnBack = Buttones.createRectBtn(App.deviceSize.width - 110, 5, 100, "Back");
 			btnPause = Buttones.createRectBtn(App.deviceSize.width - 220, 5, 100, "Pause");
 			btnStart = Buttones.createRectBtn(App.deviceSize.width - 220, 5, 100, "Start");

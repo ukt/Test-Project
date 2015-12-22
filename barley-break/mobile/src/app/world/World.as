@@ -74,7 +74,7 @@ package app.world {
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
 			clearInterval(_intervalId);
 			if (Capabilities.isDebugger) {
-				_intervalId = setInterval(updateAccelerometerData, 5000);
+				_intervalId = setInterval(updateAccelerometerData, 1000);
 			}
 		}
 
@@ -90,6 +90,8 @@ package app.world {
 			accelerometerEvent.accelerationX = Math.random() * 2 - 1;
 			accelerometerEvent.accelerationY = Math.random() * 2 - 1;
 			accelerometerEvent.accelerationZ = Math.random() * 2 - 1;
+//			accelerometerEvent.accelerationX = -1;
+//			accelerometerEvent.accelerationY = 1;
 			updateAccelerometer(accelerometerEvent)
 		}
 
