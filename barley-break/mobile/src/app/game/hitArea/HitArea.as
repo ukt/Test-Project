@@ -15,7 +15,7 @@ package app.game.hitArea {
 			this.entity = entity;
 		}
 
-		public function addSegmentByPoints(mask:uint, p1:Point, p2:Point, ...points):void {
+		public function addSegmentByPoints(mask:uint, p1:Point, p2:Point, ...points):HitArea {
 			addSegment(new HitSegment(p1, p2, mask));
 			var prevPoints:Point = p2;
 			for each (var point:* in points){
@@ -25,10 +25,12 @@ package app.game.hitArea {
 					prevPoints = nextPoint;
 				}
 			}
+			return this;
 		}
 
-		public function addSegment(segment:HitSegment):void {
+		public function addSegment(segment:HitSegment):HitArea {
 			_segments.push(segment);
+			return this;
 		}
 
 		public function addCircle(circle:HitCircle):void {

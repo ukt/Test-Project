@@ -1,30 +1,23 @@
-package app.game.entities {
+package app.game.worldListener {
 	import app.App;
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.PhysicalHitArea;
+	import app.world.IWorldListener;
 	import app.world.World;
 
-	import flash.display.MovieClip;
+	public class CollideWorldListener2 implements IWorldListener {
+		private var world:World;
 
-	public class ColliderEntity implements Entity {
-		private var _movieClip:MovieClip = new MovieClip();
-
-		public function ColliderEntity() {
+		public function CollideWorldListener2() {
 		}
 
-		public function update():void {
+		public function updateDtComplete(dt:int):void {
+			collide();
 		}
 
-		public function initialize():void {
-		}
-
-		public function get ani():MovieClip {
-			return _movieClip;
-		}
-
-		public function updateDT(dt:uint):void {
+		private function collide():void {
 			var world:World = App.world;
 			world.forEach(EntityMover, function (entityMover:EntityMover):void {
 				var entities:Vector.<Entity> = world.collide(HittableEntity(entityMover).hitArea);
@@ -56,7 +49,18 @@ package app.game.entities {
 			})
 		}
 
-		public function dispose():void {
+		public function updateComplete():void {
+//			collide();
+		}
+
+		public function entityAdded(entity:Entity):void {
+		}
+
+		public function entityRemoved(entity:Entity):void {
+		}
+
+		public function initialize(world:World):void {
+			this.world = world
 		}
 	}
 }

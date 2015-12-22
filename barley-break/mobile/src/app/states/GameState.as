@@ -4,6 +4,7 @@ package app.states {
 	import app.game.games.Game;
 	import app.game.games.SecondGame;
 	import app.game.games.ThirdGame;
+	import app.world.World;
 
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
@@ -18,30 +19,44 @@ package app.states {
 
 		private var btnBack:MovieClip;
 		private var game:Game;
+		private var btnPause:MovieClip;
+		private var btnStart:MovieClip;
+		private var btnNext:MovieClip;
 
 		public function GameState() {
 			super(new Sprite(), NAME);
 		}
 
+		private var _world:World;
+
 		override public function init():void {
 			btnBack = Buttones.createRectBtn(App.deviceSize.width - 110, 5, 100, "Back");
-			DOC.addChild(btnBack)
+			btnPause = Buttones.createRectBtn(App.deviceSize.width - 220, 5, 100, "Pause");
+			btnStart = Buttones.createRectBtn(App.deviceSize.width - 220, 5, 100, "Start");
+			btnNext = Buttones.createRectBtn(App.deviceSize.width - 330, 5, 100, "Next Step");
+			DOC.addChild(btnBack);
+			DOC.addChild(btnPause);
+			DOC.addChild(btnStart);
+			DOC.addChild(btnNext);
+			btnStart.visible = false;
+			btnNext.visible = false;
 		}
 
 		public override function activate(gameNumber:* = null):void {
 			super.activate(gameNumber);
+			_world = App.world;
 			switch (gameNumber) {
 				case 1:
-					game = new FirstGame(App.world, DOC);
+					game = new FirstGame(_world, DOC);
 					break;
 				case 2:
-					game = new SecondGame(App.world, DOC);
+					game = new SecondGame(_world, DOC);
 					break;
 				case 3:
-					game = new ThirdGame(App.world, DOC);
+					game = new ThirdGame(_world, DOC);
 					break;
 				default :
-					game = new FirstGame(App.world, DOC);
+					game = new FirstGame(_world, DOC);
 					break;
 			}
 
@@ -55,6 +70,25 @@ package app.states {
 		override protected function initEventListeners():void {
 			super.initEventListeners();
 			btnBack.addEventListener(MouseEvent.CLICK, clickBack);
+			btnPause.addEventListener(MouseEvent.CLICK, clickStartPause);
+			btnStart.addEventListener(MouseEvent.CLICK, clickStartPause);
+			btnNext.addEventListener(MouseEvent.CLICK, clickNextBtn);
+		}
+
+		private function clickNextBtn(event:MouseEvent):void {
+			_world.next();
+		}
+
+		private function clickStartPause(event:MouseEvent):void {
+			if(btnStart.visible) {
+				_world.start();
+				btnNext.visible = false;
+			} else {
+				_world.pause();
+				btnNext.visible = true;
+			}
+			btnStart.visible = btnPause.visible;
+			btnPause.visible = !btnPause.visible;
 		}
 
 		private static function clickBack(event:MouseEvent):void {

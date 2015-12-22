@@ -9,16 +9,16 @@ package app.game.hitArea {
 		public var prevP2:Point;
 		public function HitSegment(p1:Point, p2:Point, mask:uint) {
 			super(p1, p2);
-			prevP1=new Point(p1.x, p1.y);
-			prevP2=new Point(p2.x, p2.y);
+			prevP1=p1.clone();
+			prevP2=p2.clone();
 			this.mask = mask;
 		}
 
 		public function moveOnX(xOffset:Number):void {
-			prevP1=new Point(_p1.x, _p1.y);
-			prevP2=new Point(_p2.x, _p2.y);
-			_p1.x +=xOffset;
-			_p2.x +=xOffset;
+			prevP1=point1.clone();
+			prevP2=point2.clone();
+			point1.x +=xOffset;
+			point2.x +=xOffset;
 		}
 	}
 }

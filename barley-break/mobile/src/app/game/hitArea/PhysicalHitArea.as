@@ -1,0 +1,43 @@
+package app.game.hitArea {
+	import app.game.entities.actions.Entity;
+
+	public class PhysicalHitArea extends HitArea {
+
+		private var _speedX:Number = 0;
+		private var _speedY:Number = 0;
+		private var _weight:Number = 1;
+
+		public function PhysicalHitArea(entity:Entity) {
+			super(entity);
+		}
+
+		public function update(dt:uint):void {
+			moveXPosition(_speedX * dt / 1000);
+			moveYPosition(_speedY * dt / 1000);
+		}
+
+		public function get speedX():Number {
+			return _speedX;
+		}
+
+		public function set speedX(value:Number):void {
+			_speedX = value;
+		}
+
+		public function get speedY():Number {
+			return _speedY;
+		}
+
+		public function set speedY(value:Number):void {
+			_speedY = value;
+		}
+
+		public function get weight():Number {
+			return _weight;
+		}
+
+		public function set weight(value:Number):void {
+			_weight = value;
+		}
+	}
+}

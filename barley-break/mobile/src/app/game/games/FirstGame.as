@@ -1,10 +1,11 @@
 package app.game.games {
 	import app.App;
 	import app.game.entities.BorderEntity;
-	import app.game.entities.BoxEntity;
+	import app.game.entities.PointEntity;
 	import app.world.World;
 
 	import flash.display.DisplayObjectContainer;
+	import flash.events.MouseEvent;
 
 	public class FirstGame extends BaseGame {
 		public function FirstGame(world:World, DOC:DisplayObjectContainer) {
@@ -16,7 +17,15 @@ package app.game.games {
 
 
 
-			world.addEntity(new BoxEntity(5 + "_" + 5, 5, 2, 100, 100));
+//			world.addEntity(new BoxEntity(5 + "_" + 5, 5, 2, 100, 100));
+			world.addEntity(new PointEntity(100, 100));
+			world.addEntity(new PointEntity(200, 100));
+			world.addEntity(new PointEntity(100, 200));
+			world.addEntity(new PointEntity(200, 200));
+//			world.addEntity(new ColliderEntity());
+			App.main.stage.addEventListener(MouseEvent.CLICK, function(event:MouseEvent):void{
+				world.addEntity(new PointEntity(event.stageX, event.stageY + 20));
+			});
 //			world.addEntity(new BoxEntity(5 + "_" + 5, 7, 2, 100, 100));
 			/*var count:int = 4;
 			for (var x:uint = 1; x <= count; x++) {

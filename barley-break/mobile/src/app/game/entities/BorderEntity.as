@@ -4,6 +4,7 @@ package app.game.entities {
 	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
+	import app.game.hitArea.PhysicalHitArea;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -14,11 +15,12 @@ package app.game.entities {
 
 	public class BorderEntity implements Entity, HittableEntity, EntityMover {
 		private var _ani:MovieClip = new MovieClip();
-		private var _hitArea:HitArea;
+		private var _hitArea:PhysicalHitArea;
 
 		public function BorderEntity(x:Number, y:Number, width:int = 800, height:int = 600) {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
 			_hitArea.addSegmentByPoints(2, new Point(x, y), new Point(x + width, y), new Point(x + width, y + height), new Point(x, y + height), new Point(x, y));
+			_hitArea.weight = 100;
 			ani.cacheAsBitmap = true;
 		}
 

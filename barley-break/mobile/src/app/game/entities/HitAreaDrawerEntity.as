@@ -52,11 +52,21 @@ package app.game.entities {
 
 			App.world.forEach(HittableEntity, function(entity:HittableEntity):void{
 				for each(var segment:HitSegment in entity.hitArea.segments) {
+					if(segment.point1.x<0 || segment.point1.x>App.deviceSize.width || segment.point1.y<0 || segment.point1.y>App.deviceSize.height){
+						continue;
+					}
 					graphics.lineStyle(1, 0xff0000, 1, true);
 					graphics.moveTo(segment.point1.x, segment.point1.y);
 					graphics.lineTo(segment.point2.x, segment.point2.y);
 
-					graphics.lineStyle(1, 0xff0000, .5, true);
+					graphics.drawCircle(segment.point1.x, segment.point1.y, 2);
+					graphics.drawCircle(segment.point2.x, segment.point2.y, 2);
+
+					graphics.lineStyle(1, 0x0000ff, .5, true);
+
+					graphics.drawCircle(segment.prevP1.x, segment.prevP1.y, 2);
+					graphics.drawCircle(segment.prevP2.x, segment.prevP2.y, 2);
+
 					graphics.moveTo(segment.prevP1.x, segment.prevP1.y);
 					graphics.lineTo(segment.point1.x, segment.point1.y);
 					graphics.moveTo(segment.prevP2.x, segment.prevP2.y);
@@ -79,6 +89,7 @@ package app.game.entities {
 
 		public function dispose():void {
 			if(_ani.parent){
+				_ani.graphics.clear();
 				_ani.parent.removeChild(_ani);
 			}
 		}

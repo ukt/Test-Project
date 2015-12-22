@@ -62,15 +62,27 @@ package app.world {
 			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			_timer = new Timer(1000 / 30);
 			_timer.addEventListener(TimerEvent.TIMER, updateDt);
+			start();
+			updateAccelerometerData();
+			worldListeners = new <IWorldListener>[];
+		}
+
+		public function start():void {
 			_timer.start();
 			_updateDt = getTimer();
+			main.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			accelerometer.addEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
-			updateAccelerometerData();
 			clearInterval(_intervalId);
 			if (Capabilities.isDebugger) {
-				_intervalId = setInterval(updateAccelerometerData, 2000);
+				_intervalId = setInterval(updateAccelerometerData, 5000);
 			}
-			worldListeners = new <IWorldListener>[];
+		}
+
+		public function pause():void {
+			main.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+			accelerometer.removeEventListener(AccelerometerEvent.UPDATE, updateAccelerometer);
+			_timer.stop();
+			clearInterval(_intervalId);
 		}
 
 		public function updateAccelerometerData():void {
@@ -105,25 +117,23 @@ package app.world {
 			return collide(entityToCollide, 1).length > 0;
 		}
 
-		private var _frameTime:uint = 0;
 		private var _updateDt:uint = getTimer();
 
 
-		private function updateDt(event:TimerEvent):void {
+		private function updateDt(event:TimerEvent = null):void {
 			var time:int = getTimer();
 			var dt:int;
 			for each(var entity:Entity in entities) {
 				dt = getTimer() - _updateDt;
 				entity.updateDT(Math.min(100, dt));
 			}
-			trace("updateDt:\t", getTimer() - time, "  \t", dt);
+//			trace("updateDt:\t", getTimer() - time, "  \t", dt);
 			_updateDt = getTimer();
 			for each (var worldListener:IWorldListener in worldListeners){
 				worldListener.updateDtComplete(dt);
 			}
 		}
 		private function onEnterFrame(event:Event = null):void {
-			var dt:int = getTimer() - _frameTime;
 			for each(var entity:Entity in entities) {
 				entity.update();
 			}
@@ -141,9 +151,6 @@ package app.world {
 //			trace("collideTime:	", _collideTime, "collideCount:	", _collideCount, "dt:	", dt);
 			_collideTime = 0;
 			_collideCount = 0;
-			if (dt > 16) {
-				_frameTime = getTimer();
-			}
 
 		}
 
@@ -186,6 +193,12 @@ package app.world {
 				}
 			});
 
+		}
+
+		public function next():void {
+			onEnterFrame();
+			_updateDt = getTimer() - 20;
+			updateDt();
 		}
 	}
 }

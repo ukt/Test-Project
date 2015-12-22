@@ -3,6 +3,7 @@ package app.collider {
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
+	import app.game.hitArea.HitSegment;
 
 	import loka.asUtils.collider.Collide;
 	import loka.asUtils.collider.primitive.Segment;
@@ -21,9 +22,15 @@ package app.collider {
 				if (hittableEntity === hitArea.entity) {
 					return;
 				}
-				for each(var segmentAtBody1:Segment in hitArea.segments) {
-					for each(var segmentAtBody2:Segment in hittableEntity.hitArea.segments) {
+				for each(var segmentAtBody1:HitSegment in hitArea.segments) {
+					for each(var segmentAtBody2:HitSegment in hittableEntity.hitArea.segments) {
 						if (Collide.segmentsIntersection(segmentAtBody1, segmentAtBody2)) {
+							result.push(hittableEntity);
+							return;
+						} else if (Collide.segmentsIntersection(new Segment(segmentAtBody1.prevP1, segmentAtBody1.point1), segmentAtBody2)) {
+							result.push(hittableEntity);
+							return;
+						} else if (Collide.segmentsIntersection(new Segment(segmentAtBody1.prevP2, segmentAtBody1.point2), segmentAtBody2)) {
 							result.push(hittableEntity);
 							return;
 						}
