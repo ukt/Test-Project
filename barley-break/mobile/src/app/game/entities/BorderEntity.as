@@ -1,5 +1,4 @@
 package app.game.entities {
-	import app.App;
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.EntityMover;
 	import app.game.entities.actions.HittableEntity;
@@ -8,7 +7,6 @@ package app.game.entities {
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
-	import flash.events.MouseEvent;
 	import flash.geom.Point;
 
 	import loka.asUtils.collider.primitive.Segment;
@@ -36,10 +34,6 @@ package app.game.entities {
 			graphics.endFill();
 		}
 
-		private static function onClick(event:MouseEvent):void {
-			App.world.updateAccelerometerData();
-		}
-
 		public function updateDT(dt:uint):void {
 
 		}
@@ -54,7 +48,6 @@ package app.game.entities {
 
 		public function dispose():void {
 			if (_ani.parent) {
-				_ani.removeEventListener(MouseEvent.CLICK, onClick);
 				_ani.parent.removeChild(_ani);
 			}
 		}
