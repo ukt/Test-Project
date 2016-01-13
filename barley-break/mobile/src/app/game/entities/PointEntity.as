@@ -17,11 +17,12 @@ package app.game.entities {
 		public function PointEntity(x:int, y:int, weight:Number = 1) {
 			_hitArea = new PhysicalHitArea(this);
 			var width:int = weight * 5;
+			var i:int = 100;
 			_hitArea.addSegmentByPoints(2,
-					new Point(x, y),
-					new Point(x + width, y + width),
-					new Point(x + width * 2, y + 0),
-					new Point(x, y)
+					new Point(x + Math.random()*i, y+Math.random()* i),
+					new Point(x + width + Math.random()*i, y + width + Math.random()*i),
+					new Point(x + width * 2 + Math.random()*i, y + 0 + Math.random()*i),
+					new Point(x + Math.random()*i, y + Math.random()*i)
 			);
 			_hitArea.weight = weight;
 		}

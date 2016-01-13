@@ -4,6 +4,7 @@ package app.game.entities {
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.SquareGetter;
 	import app.game.hitArea.HitArea;
+	import app.game.hitArea.PhysicalHitArea;
 	import app.world.World;
 
 	import flash.display.MovieClip;
@@ -13,14 +14,14 @@ package app.game.entities {
 	public class BoxEntityAutoSpawner implements Entity, Actioner {
 		private var _ani:MovieClip = new MovieClip();
 		private var _timeToCheck:int;
-		private var _hitArea:HitArea;
+		private var _hitArea:PhysicalHitArea;
 		private var name:String;
 		public function get hitArea():HitArea {
 			return _hitArea;
 		}
 
 		public function BoxEntityAutoSpawner(name:String, timeToCheck:int = 5000) {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
 			this.name = name;
 			_timeToCheck = timeToCheck
 		}
@@ -40,7 +41,7 @@ package app.game.entities {
 			}
 		}
 		public function updateDT(dt:uint):void {
-
+			_hitArea.update(dt);
 		}
 		public function update():void {
 		}

@@ -5,6 +5,7 @@ package app.game.entities {
 	import app.game.entities.actions.HittableEntity;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
+	import app.game.hitArea.PhysicalHitArea;
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
@@ -17,13 +18,13 @@ package app.game.entities {
 		private var _ani:MovieClip = new MovieClip();
 
 		private var name:String;
-		private var _hitArea:HitArea;
+		private var _hitArea:PhysicalHitArea;
 		public function get hitArea():HitArea {
 			return _hitArea;
 		}
 
 		public function StaticBoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
 			width = width * App.appScale;
 			height = height * App.appScale;
 			this.name = name + x + "_" + y;
@@ -52,7 +53,8 @@ package app.game.entities {
 		}
 
 		public function initialize():void {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
+			_hitArea.weight=1000;
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x, _ani.y + _ani.height), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x + _ani.width, _ani.y), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x + _ani.width, _ani.y), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
@@ -61,10 +63,12 @@ package app.game.entities {
 		}
 
 		public function updateDT(dt:uint):void {
-
+			_hitArea.update(dt);
 		}
 
 		public function update():void {
+			_ani.x = hitArea.centralCircle.point.x - _ani.width/2;
+			_ani.y = hitArea.centralCircle.point.y - _ani.height/2;
 		}
 
 		public function get ani():MovieClip {

@@ -100,7 +100,11 @@ package app.world {
 			accelerometerVO.accelerationX = event.accelerationX;
 			accelerometerVO.accelerationY = event.accelerationY;
 			accelerometerVO.accelerationZ = event.accelerationZ;
-			App.tf.text = "accelerationX: " + accelerometerVO.accelerationX + "\n" + "accelerationY: " + accelerometerVO.accelerationY + "\n";
+			App.tf.text =
+					"accelerationX: " + accelerometerVO.accelerationX + "\n" +
+					"accelerationY: " + accelerometerVO.accelerationY + "\n"+
+					"entities.length: " + entities.length + "\n";
+
 
 		}
 
@@ -177,7 +181,7 @@ package app.world {
 		public function addEntity(entity:Entity):void {
 			entity.initialize();
 			entities.push(entity);
-//			main.addChild(entity.ani);
+			main.addChild(entity.ani);
 			for each (var worldListener:IWorldListener in worldListeners){
 				worldListener.entityAdded(entity);
 			}

@@ -1,6 +1,7 @@
 package app.game.entities {
 	import app.App;
 	import app.accelerometer.AccelerometerVO;
+	import app.game.Acceleration;
 	import app.game.entities.actions.Actioner;
 	import app.game.entities.actions.Entity;
 	import app.game.entities.actions.EntityMover;
@@ -8,6 +9,7 @@ package app.game.entities {
 	import app.game.entities.actions.SquareGetter;
 	import app.game.hitArea.HitArea;
 	import app.game.hitArea.HitSegment;
+	import app.game.hitArea.PhysicalHitArea;
 	import app.world.World;
 
 	import flash.display.Graphics;
@@ -17,7 +19,6 @@ package app.game.entities {
 	import flash.system.Capabilities;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
-	import flash.utils.getTimer;
 
 	public class BoxEntity implements Entity, Actioner, SquareGetter, HittableEntity, EntityMover {
 		private var _ani:MovieClip = new MovieClip();
@@ -34,10 +35,10 @@ package app.game.entities {
 
 		public var color:uint;
 		private var _time:uint;
-		private var _hitArea:HitArea;
+		private var _hitArea:PhysicalHitArea;
 
 		public function BoxEntity(name:String, x:Number, y:Number, width:int = 20, height:int = 20) {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
 			this.name = name;
 			width = width * App.appScale;
 			height = height * App.appScale;
@@ -71,7 +72,7 @@ package app.game.entities {
 		}
 
 		public function initialize():void {
-			_hitArea = new HitArea(this);
+			_hitArea = new PhysicalHitArea(this);
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x, _ani.y + _ani.height), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x, _ani.y), new Point(_ani.x + _ani.width, _ani.y), 2));
 			_hitArea.addSegment(new HitSegment(new Point(_ani.x + _ani.width, _ani.y), new Point(_ani.x + _ani.width, _ani.y + _ani.height), 2));
@@ -88,93 +89,19 @@ package app.game.entities {
 			}
 			var world:World = App.world;
 			this.accelerometerVO = world.accelerometerVO;
-			_speedX += calculateAccelerationByX();
-			_speedY += calculateAccelerationByY();
-			_speedX = Math.max(-maxSpeed, Math.min(_speedX, maxSpeed));
-			_speedY = Math.max(-maxSpeed, Math.min(_speedY, maxSpeed));
-
-			var speedCompensation:Number = .25;
-//			var entities:Vector.<Entity>;
-//			if(Math.abs(_speedX*(1-accelerometerVO.accelerationX))>1) {
-				setXPosition(_speedX * (dt / 16));
-				/*entities = world.collide(hitArea);
-				if (entities.length > 0) {
-					var speedXCompensation:Number = speedCompensation * entities.length;
-					_speedX *= -speedXCompensation;
-					for each(var entity:Entity in entities) {
-						if (entity is EntityMover) {
-							EntityMover(entity).addSpeed(this, speedXCompensation, 0)
-						}
-					}
-					moveToPrevXPosition();
-				}*/
-//			}
-//			if(Math.abs(_speedY*(1-accelerometerVO.accelerationY))>1) {
-				setYPosition(_speedY * (dt / 16));
-				/*entities = world.collide(hitArea);
-				if (entities.length > 0) {
-					var speedYCompensation:Number = speedCompensation * entities.length;
-					_speedY *= -speedYCompensation;
-					for each(var entity:Entity in entities) {
-						if (entity is EntityMover) {
-							EntityMover(entity).addSpeed(this, 0, speedYCompensation)
-						}
-					}
-					moveToPrevYPosition();
-				}*/
-//			}
+			_hitArea.update(dt);
+			_hitArea.speedX -= Acceleration.G * accelerometerVO.accelerationX;
+			_hitArea.speedY += Acceleration.G * accelerometerVO.accelerationY;
 		}
 		public function update():void {
 			if (hitArea.segments.length == 0) {
 				return
 			}
-			_ani.x = hitArea.segments[0].point1.x;
-			_ani.y = hitArea.segments[0].point1.y;
-		}
-
-		private function calculateAccelerationByX():Number {
-			return maxSpeed * accelerometerVO.accelerationX * -1 * acceleration;
-		}
-
-		private function calculateAccelerationByY():Number {
-			return maxSpeed * accelerometerVO.accelerationY * acceleration;
+			_ani.x = hitArea.centralCircle.point.x - _ani.width/2;
+			_ani.y = hitArea.centralCircle.point.y - _ani.height/2;
 		}
 
 		public function action():void {
-			var timer:int = getTimer();
-			return
-			if (Math.abs(_speedX) > 3 || Math.abs(_speedY) > 3) {
-				_time = timer;
-				return;
-			} else if (timer - _time < 2000) {
-				return;
-			}
-
-			var collideMove:int = 5;
-			setXPosition(collideMove);
-			removeCollidedEntities();
-			moveToPrevXPosition();
-			setXPosition(-collideMove);
-			removeCollidedEntities();
-			moveToPrevXPosition();
-			setYPosition(collideMove);
-			removeCollidedEntities();
-			moveToPrevYPosition();
-			setYPosition(-collideMove);
-			removeCollidedEntities();
-			moveToPrevYPosition();
-		}
-
-		private function removeCollidedEntities():Vector.<Entity> {
-			var world:World = App.world;
-			var collidedEntities:Vector.<Entity> = world.collide(hitArea);
-			for each(var collidedEntity:Entity in collidedEntities) {
-				if (collidedEntity as BoxEntity && BoxEntity(collidedEntity).color == color) {
-					world.removeEntity(collidedEntity);
-					world.removeEntity(this);
-				}
-			}
-			return collidedEntities;
 		}
 
 		private function moveToPrevXPosition():Boolean {
@@ -185,32 +112,6 @@ package app.game.entities {
 		private function moveToPrevYPosition():Boolean {
 			hitArea.moveToPrevYPosition();
 			return true;
-		}
-
-		private function setXPosition(xOffset:Number):Boolean {
-			/*var possibleNewX:Number = hitArea.segments[0].point1.x + xOffset;
-			 var deviceSize:Rectangle = App.deviceSize;
-			 if (possibleNewX < 0) {
-			 xOffset = xOffset - possibleNewX;
-			 } else if (possibleNewX + ani.width > deviceSize.width) {
-			 var possibleNewXPlusW:Number = possibleNewX + ani.width;
-			 xOffset = xOffset + deviceSize.width - possibleNewXPlusW;
-			 }*/
-			hitArea.moveXPosition(xOffset);
-			return false;
-		}
-
-		private function setYPosition(yOffset:Number):Boolean {
-			/*var possibleNewY:Number = hitArea.segments[0].point1.y + yOffset;
-			 var deviceSize:Rectangle = App.deviceSize;
-			 if (possibleNewY < 0) {
-			 yOffset = yOffset - possibleNewY;
-			 } else if (possibleNewY + ani.height > deviceSize.height) {
-			 var possibleNewYPlusH:Number = possibleNewY + ani.height;
-			 yOffset = yOffset + deviceSize.height - possibleNewYPlusH;
-			 }*/
-			hitArea.moveYPosition(yOffset);
-			return false;
 		}
 
 		public function get ani():MovieClip {

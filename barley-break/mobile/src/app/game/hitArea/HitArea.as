@@ -25,7 +25,9 @@ package app.game.hitArea {
 			var sumY:Number = 0;
 			for each(var segment:Segment in segments) {
 				sumX += segment.point1.x;
+				sumX += segment.point2.x;
 				sumY += segment.point1.y;
+				sumY += segment.point2.y;
 				if(segment.point1.x<minX){
 					minX = segment.point1.x;
 				}if(segment.point1.y<minY){
@@ -35,10 +37,11 @@ package app.game.hitArea {
 					maxX = segment.point1.x;
 				}
 			}
-			centralCircle.point.x = sumX / segments.length;
-			centralCircle.point.y = sumY / segments.length;
+			centralCircle.point.x = sumX / (segments.length*2);
+			centralCircle.point.y = sumY / (segments.length*2);
 			for each(var segment2:Segment in segments) {
 				radius = Math.max(centralCircle.point.subtract(segment2.point1).length, radius);
+				radius = Math.max(centralCircle.point.subtract(segment2.point2).length, radius);
 			}
 			centralCircle.radius = radius;
 		}
