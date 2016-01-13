@@ -7,7 +7,10 @@ package app.game.entities {
 
 	import flash.display.Graphics;
 	import flash.display.MovieClip;
+	import flash.geom.Point;
 	import flash.utils.getTimer;
+
+	import loka.asUtils.collider.primitive.Circle;
 
 	public class HitAreaDrawerEntity implements Entity {
 		private var _ani:MovieClip = new MovieClip();
@@ -51,6 +54,11 @@ package app.game.entities {
 
 
 			App.world.forEach(HittableEntity, function(entity:HittableEntity):void{
+				graphics.lineStyle(2, 0xcecece, 1, true);
+				var centralCircle:Circle = entity.hitArea.centralCircle;
+				var point:Point = centralCircle.point;
+				graphics.drawCircle(point.x, point.y, centralCircle.radius);
+
 				for each(var segment:HitSegment in entity.hitArea.segments) {
 					if(segment.point1.x<0 || segment.point1.x>App.deviceSize.width || segment.point1.y<0 || segment.point1.y>App.deviceSize.height){
 						continue;

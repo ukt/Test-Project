@@ -22,6 +22,9 @@ package app.collider {
 				if (hittableEntity === hitArea.entity) {
 					return;
 				}
+				if(!Collide.circleOnCircleIntersection(hitArea.centralCircle, hittableEntity.hitArea.centralCircle)){
+					return;
+				}
 				for each(var segmentAtBody1:HitSegment in hitArea.segments) {
 					for each(var segmentAtBody2:HitSegment in hittableEntity.hitArea.segments) {
 						if (Collide.segmentsIntersection(segmentAtBody1, segmentAtBody2)) {
